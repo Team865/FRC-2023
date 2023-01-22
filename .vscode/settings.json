@@ -25,8 +25,5 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests",
-  "cSpell.words": [
-    "frontleft"
-  ]
+  "java.test.defaultConfig": "WPIlibUnitTests"
 }
