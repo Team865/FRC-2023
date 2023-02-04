@@ -7,6 +7,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxLimitSwitch.Type;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance;
@@ -52,8 +54,12 @@ public class Elevator extends SubsystemBase {
     public CANSparkMax RightMain = createFollowerSparkMAXInverted(kElevatorRightMain);
     public CANSparkMax RightSecondary = createFollowerSparkMAXInverted(kElevatorRightSecondary);
 
-    // Check if limit switch is foward or Reverse irl
+    // Check if limit switch is forward or Reverse irl
     // Check if we are going to use Normally closed or Normally open
     // used to sync with encoders
     public SparkMaxLimitSwitch limitSwitchLeftMain = LeftMain.getForwardLimitSwitch(Type.kNormallyClosed);
+
+    // Creates an incremental encoder
+    public RelativeEncoder encoder =
+    LeftMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
 }
