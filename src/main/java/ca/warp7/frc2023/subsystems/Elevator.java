@@ -2,13 +2,14 @@ package ca.warp7.frc2023.subsystems;
 
 import static ca.warp7.frc2023.Constants.*;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxLimitSwitch;
-import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
+import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.SparkMaxLimitSwitch.Type;
+import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance;
@@ -60,6 +61,36 @@ public class Elevator extends SubsystemBase {
     public SparkMaxLimitSwitch limitSwitchLeftMain = LeftMain.getForwardLimitSwitch(Type.kNormallyClosed);
 
     // Creates an incremental encoder
-    public RelativeEncoder encoder =
-    LeftMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    public RelativeEncoder encoder = LeftMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    // Method that creates and sets up a pid controller
+    public SparkMaxPIDController createAndSetupPIDController(CANSparkMax motor) {
+        SparkMaxPIDController PIDController = motor.getPIDController();
+        PIDController.setFeedbackDevice(encoder);
+        double kP = 0.1;
+        double kI = 1e-4;
+        double kD = 1;
+        double kIz = 0;
+        double kFF = 0;
+        double kMaxOutput = 1;
+        double kMinOutput = -1;
+        int smartMotionSlot = 0;
+        double kMaxVel = 2000;
+        double kMinVel = 0;
+        double kMaxAcc = 1500;
+        PIDController.setP(kP);
+        PIDController.setI(kI);
+        PIDController.setD(kD);
+        PIDController.setIZone(kIz);
+        PIDController.setFF(kFF);
+        PIDController.setOutputRange(kMinOutput, kMaxOutput);
+        PIDController.setReference(0, CANSparkMax.ControlType.kSmartMotion);
+        PIDController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
+        PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
+        PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
+        PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
+        return PIDController;
+    }
+
+    // creates and sets a PID controller
+    public SparkMaxPIDController controllerLeftMain = createAndSetupPIDController(LeftMain);
 }
