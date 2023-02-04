@@ -98,4 +98,9 @@ public class Elevator extends SubsystemBase {
     public double getPosition() {
         return encoder.getPosition();
     }
+
+    // Sets the setPoint of the PID controller to whatever was passed as the input
+    public void setPosition(double length) {
+        controllerLeftMain.setReference(length, CANSparkMax.ControlType.kPosition);
+    }
 }
