@@ -5,6 +5,8 @@ import static ca.warp7.frc2023.Constants.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.SparkMaxLimitSwitch.Type;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance;
@@ -35,7 +37,7 @@ public class Elevator extends SubsystemBase {
     // creates an inverted SparkMAx follower motor
     public CANSparkMax createFollowerSparkMAXInverted(int deviceID) {
         CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
-        follower.restoreFactoryDefaults()  ;
+        follower.restoreFactoryDefaults();
         follower.follow(LeftMain, true);
         follower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         follower.enableVoltageCompensation(12.0);
@@ -49,4 +51,9 @@ public class Elevator extends SubsystemBase {
     // makes the inverted follower motors for the right side
     public CANSparkMax RightMain = createFollowerSparkMAXInverted(kElevatorRightMain);
     public CANSparkMax RightSecondary = createFollowerSparkMAXInverted(kElevatorRightSecondary);
+
+    // Check if limit switch is foward or Reverse irl
+    // Check if we are going to use Normally closed or Normally open
+    // used to sync with encoders
+    public SparkMaxLimitSwitch limitSwitchLeftMain = LeftMain.getForwardLimitSwitch(Type.kNormallyClosed);
 }
