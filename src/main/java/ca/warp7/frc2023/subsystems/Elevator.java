@@ -103,4 +103,13 @@ public class Elevator extends SubsystemBase {
     public void setPosition(double length) {
         controllerLeftMain.setReference(length, CANSparkMax.ControlType.kPosition);
     }
+
+    // resets the encoder
+    public void zeroEncoder() {
+        if (limitSwitchLeftMain.isPressed()) {
+            encoder.setPosition(0);
+        } else {
+            System.out.println("limit switch is no pressy");
+        }
+    }
 }
