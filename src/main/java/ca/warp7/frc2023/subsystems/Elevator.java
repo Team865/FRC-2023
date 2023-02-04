@@ -62,7 +62,7 @@ public class Elevator extends SubsystemBase {
 
     // Creates an incremental encoder
     public RelativeEncoder encoder = LeftMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
-    // Method that creates and sets up a pid controller
+    // Method that creates and sets up a PID controller
     public SparkMaxPIDController createAndSetupPIDController(CANSparkMax motor) {
         SparkMaxPIDController PIDController = motor.getPIDController();
         PIDController.setFeedbackDevice(encoder);
@@ -93,4 +93,9 @@ public class Elevator extends SubsystemBase {
 
     // creates and sets a PID controller
     public SparkMaxPIDController controllerLeftMain = createAndSetupPIDController(LeftMain);
+
+    // gets the number of rotations from the encoder
+    public double getPosition() {
+        return encoder.getPosition();
+    }
 }
