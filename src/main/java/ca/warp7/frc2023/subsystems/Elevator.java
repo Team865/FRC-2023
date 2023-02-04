@@ -112,4 +112,10 @@ public class Elevator extends SubsystemBase {
             System.out.println("limit switch is no pressy");
         }
     }
+
+    // fully retracts elevator
+    public void fullyRetract() {
+        setPosition(0);
+        zeroEncoder();
+    }
 }
