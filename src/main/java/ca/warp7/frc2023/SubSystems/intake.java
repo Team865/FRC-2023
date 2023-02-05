@@ -4,6 +4,11 @@
 
 package ca.warp7.frc2023.SubSystems;
 
+import java.util.concurrent.TimeUnit;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,10 +20,33 @@ public class intake extends SubsystemBase {
  
   int toggle = 0;
 
+  
+  public void change()  {
+    if (toggle == 0) {
+      System.out.println(toggle);
+      toggle = 1;
+      return;
+    }
+    if (toggle == 1) {
+      System.out.println(toggle);
+      toggle = 0;
+    }
 
+  }
+  public CommandBase toggle() {
+
+    return runOnce(() -> change());
+    
+  
+  }
   public CommandBase movemotorCommand() {
+    if (toggle == 0) {
+      System.out.println("togglw");
+      return runOnce(() -> System.out.println("run"));
+    }
 
-    return runOnce(() -> System.out.println("runing"));
+    return runOnce(() -> System.out.println("bob"));
+    
   
   }
   public CommandBase stopmotorCommand() {
@@ -34,5 +62,6 @@ public class intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 }
