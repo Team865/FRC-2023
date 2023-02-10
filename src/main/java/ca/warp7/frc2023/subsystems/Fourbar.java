@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Fourbar extends SubsystemBase {
     private static Fourbar instance;
@@ -66,8 +67,28 @@ public class Fourbar extends SubsystemBase {
         PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
         PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
         PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
+    
+        // print values to smart dashboard
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putNumber("I Zone", kIz);
+        SmartDashboard.putNumber("Feed Forward", kFF);
+        SmartDashboard.putNumber("Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Min Output", kMinOutput);
+
+        // display Smart Motion coefficients
+        SmartDashboard.putNumber("Max Velocity", kMaxVel);
+        SmartDashboard.putNumber("Min Velocity", kMinVel);
+        SmartDashboard.putNumber("Max Acceleration", kMaxAcc);
+        SmartDashboard.putNumber("Set Position", 0);
+        SmartDashboard.putNumber("Set Velocity", 0);
+        
+
         return PIDController;
     }
+
+    
 
     // create and set a PID controller
     public SparkMaxPIDController controllermotorMain = createAndSetupPIDController(motorMain);
