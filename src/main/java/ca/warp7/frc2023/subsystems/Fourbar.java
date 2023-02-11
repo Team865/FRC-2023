@@ -1,12 +1,11 @@
 package ca.warp7.frc2023.subsystems;
 import static ca.warp7.frc2023.Constants.*;
+import ca.warp7.frc2023.lib.SparkMaxUtil;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Fourbar extends SubsystemBase {
     private static Fourbar instance;
@@ -16,83 +15,17 @@ public class Fourbar extends SubsystemBase {
         return instance;
     }
 
-    public static CANSparkMax createMasterSparkMAX(int deviceID) {
-        CANSparkMax master = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
-        master.restoreFactoryDefaults();
-        master.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        master.enableVoltageCompensation(12.0);
-        return master;
-    }
-
-    // creates an inverted SparkMAx follower motor, stops death
-    public CANSparkMax createFollowerSparkMAX(int deviceID) {
-        CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
-        follower.restoreFactoryDefaults();
-        follower.follow(motorMain, true);
-        follower.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        follower.enableVoltageCompensation(12.0);
-        return follower;
-    }
-
     // creates a leader and a follower motor
-    public CANSparkMax motorMain = createMasterSparkMAX(FOURBAR_MOTOR_PORT_0);
-    public CANSparkMax motorSecondary = createFollowerSparkMAX(FOURBAR_MOTOR_PORT_1);
+    public CANSparkMax motorMain = SparkMaxUtil.createMasterMotor(FOURBAR_MOTOR_PORT_0);
+    public CANSparkMax motorSecondary = SparkMaxUtil.createFollowerMotor(motorMain, FOURBAR_MOTOR_PORT_1, true); // need inversion, stops death
 
     // the encoder (incremental)
     public RelativeEncoder encoder = motorMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192); // last value = count per rotation
     
-    // Method that creates and sets up a PID controller
-    public SparkMaxPIDController createAndSetupPIDController(CANSparkMax motor) {
-        SparkMaxPIDController PIDController = motor.getPIDController();
-        PIDController.setFeedbackDevice(encoder);
-        double kP = 0.1;
-        double kI = 1e-4;
-        double kD = 1;
-        double kIz = 0;
-        double kFF = 0;
-        double kMaxOutput = 1;
-        double kMinOutput = -1;
-        int smartMotionSlot = 0;
-        double kMaxVel = 2000;
-        double kMinVel = 0;
-        double kMaxAcc = 1500;
-        PIDController.setP(kP);
-        PIDController.setI(kI);
-        PIDController.setD(kD);
-        PIDController.setIZone(kIz);
-        PIDController.setFF(kFF);
-        PIDController.setOutputRange(kMinOutput, kMaxOutput);
-        PIDController.setReference(0, CANSparkMax.ControlType.kSmartMotion);
-        PIDController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
-        PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
-        PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
-        PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
-    
-        // print values to smart dashboard
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("I Zone", kIz);
-        SmartDashboard.putNumber("Feed Forward", kFF);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
-
-        // display Smart Motion coefficients
-        SmartDashboard.putNumber("Max Velocity", kMaxVel);
-        SmartDashboard.putNumber("Min Velocity", kMinVel);
-        SmartDashboard.putNumber("Max Acceleration", kMaxAcc);
-        SmartDashboard.putNumber("Set Position", 0);
-        SmartDashboard.putNumber("Set Velocity", 0);
-        
-
-        return PIDController;
-    }
-
-    
-
     // create and set a PID controller
-    public SparkMaxPIDController controllermotorMain = createAndSetupPIDController(motorMain);
-
+    public SparkMaxPIDController controllermotorMain = SparkMaxUtil.createPIDController(
+        motorMain, encoder, 0.1, 1e-4, 1, 0, 2000, 1500 );
+        
     // gets the number of rotations from the encoder
     public double getPosition() {
         return encoder.getPosition();
