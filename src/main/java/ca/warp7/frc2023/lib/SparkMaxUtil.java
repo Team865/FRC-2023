@@ -1,5 +1,5 @@
 package ca.warp7.frc2023.lib;
-import ca.warp7.frc2023.lib.SparkMaxUtil;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
@@ -31,8 +31,15 @@ public class SparkMaxUtil {
     }
 
     // Method that creates and sets up a PID controller
-    public static SparkMaxPIDController createPIDController(CANSparkMax motorGroup, RelativeEncoder motorEncoder, 
-            double kP, double kI, double kD, double kMinVel, double kMaxVel, double kMaxAcc) {
+    public static SparkMaxPIDController createPIDController(
+            CANSparkMax motorGroup,
+            RelativeEncoder motorEncoder,
+            double kP,
+            double kI,
+            double kD,
+            double kMinVel,
+            double kMaxVel,
+            double kMaxAcc) {
 
         SparkMaxPIDController PIDController = motorGroup.getPIDController();
         PIDController.setFeedbackDevice(motorEncoder);
@@ -57,8 +64,14 @@ public class SparkMaxUtil {
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
 
+        SmartDashboard.putNumber("Max Velocity", kMaxVel);
+        SmartDashboard.putNumber("Min Velocity", kMinVel);
+        SmartDashboard.putNumber("Max Acceleration", kMaxAcc);
+        SmartDashboard.putNumber("Set Position", 0);
+        SmartDashboard.putNumber("Set Velocity", 0);
+
         return PIDController;
     }
-    //We are sorry daniel
-    //dont kill us
+    // We are sorry daniel
+    // dont kill us
 }
