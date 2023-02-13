@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
     public CANSparkMax createFollowerSparkMAX(int deviceID) {
         CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
         follower.restoreFactoryDefaults();
-        follower.follow(LeftMain);
+        follower.follow(leftMain);
         follower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         follower.enableVoltageCompensation(12.0);
         return follower;
@@ -42,27 +42,27 @@ public class Elevator extends SubsystemBase {
     public CANSparkMax createFollowerSparkMAXInverted(int deviceID) {
         CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
         follower.restoreFactoryDefaults();
-        follower.follow(LeftMain, true);
+        follower.follow(leftMain, true);
         follower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         follower.enableVoltageCompensation(12.0);
         return follower;
     }
 
     // makes a leader and a follower motor for the left side
-    public CANSparkMax LeftMain = createMasterSparkMAX(kElevatorLeftMain);
-    public CANSparkMax LeftSecondary = createFollowerSparkMAX(kElevatorLeftSecondary);
+    public CANSparkMax leftMain = createMasterSparkMAX(kElevatorLeftMain);
+    public CANSparkMax leftSecondary = createMasterSparkMAX(kElevatorLeftSecondary);
 
     // makes the inverted follower motors for the right side
-    public CANSparkMax RightMain = createFollowerSparkMAXInverted(kElevatorRightMain);
-    public CANSparkMax RightSecondary = createFollowerSparkMAXInverted(kElevatorRightSecondary);
+    public CANSparkMax rightMain = createFollowerSparkMAXInverted(kElevatorRightMain);
+    public CANSparkMax rightSecondary = createFollowerSparkMAXInverted(kElevatorRightSecondary);
 
     // Check if limit switch is forward or Reverse irl
     // Check if we are going to use Normally closed or Normally open
     // used to sync with encoders
-    public SparkMaxLimitSwitch limitSwitchLeftMain = LeftMain.getForwardLimitSwitch(Type.kNormallyClosed);
+    public SparkMaxLimitSwitch limitSwitchLeftMain = leftMain.getForwardLimitSwitch(Type.kNormallyClosed);
 
     // Creates an incremental encoder
-    public RelativeEncoder encoder = LeftMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    public RelativeEncoder encoder = leftMain.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
     // Method that creates and sets up a PID controller
     public SparkMaxPIDController createAndSetupPIDController(CANSparkMax motor) {
         SparkMaxPIDController PIDController = motor.getPIDController();
@@ -113,7 +113,7 @@ public class Elevator extends SubsystemBase {
     }
 
     // creates and sets a PID controller
-    public SparkMaxPIDController controllerLeftMain = createAndSetupPIDController(LeftMain);
+    public SparkMaxPIDController controllerLeftMain = createAndSetupPIDController(leftMain);
 
     // gets the number of rotations from the encoder
     public double getPosition() {
