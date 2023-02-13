@@ -15,7 +15,7 @@ public class Fourbar extends SubsystemBase {
         return instance;
     }
 
-    // creates a leader and a follower motor
+    // creates a motorgroup to hold both motors, this is important as different commands could break the fourbar
     public CANSparkMax motorMain = SparkMaxUtil.createMasterMotor(FOURBAR_MOTOR_PORT_0);
     public CANSparkMax motorSecondary = SparkMaxUtil.createFollowerMotor(motorMain, FOURBAR_MOTOR_PORT_1, true); // need inversion, stops death
 
@@ -37,5 +37,4 @@ public class Fourbar extends SubsystemBase {
     }
 }
 
-//daniel dont beat us
-//we tried
+// please forgive our sins programming lords
