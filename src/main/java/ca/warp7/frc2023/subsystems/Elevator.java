@@ -9,6 +9,7 @@ import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -88,6 +89,26 @@ public class Elevator extends SubsystemBase {
         PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
         PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
         PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
+
+        // display PID coefficients on SmartDashboard
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putNumber("I Zone", kIz);
+        SmartDashboard.putNumber("Feed Forward", kFF);
+        SmartDashboard.putNumber("Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Min Output", kMinOutput);
+
+        // display Smart Motion coefficients
+        SmartDashboard.putNumber("Max Velocity", kMaxVel);
+        SmartDashboard.putNumber("Min Velocity", kMinVel);
+        SmartDashboard.putNumber("Max Acceleration", kMaxAcc);
+        SmartDashboard.putNumber("Allowed Closed Loop Error", kMinOutput);
+        SmartDashboard.putNumber("Set Position", 0);
+        SmartDashboard.putNumber("Set Velocity", 0);
+
+        // button to toggle between velocity and smart motion modes
+        SmartDashboard.putBoolean("Mode", true);
         return PIDController;
     }
 
