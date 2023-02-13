@@ -139,4 +139,9 @@ public class Elevator extends SubsystemBase {
         setPosition(0);
         zeroEncoder();
     }
+
+    @Override
+    public void periodic() {
+        zeroEncoder();
+    }
 }
