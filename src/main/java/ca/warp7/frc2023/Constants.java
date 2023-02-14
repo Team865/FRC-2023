@@ -1,7 +1,7 @@
 package ca.warp7.frc2023;
 
 public class Constants {
-    //Replace with real can id's
+    // Replace with real can id's
     public static final int kMotorFirst = 11;
     public static final int kMotorSecond = 12;
 
