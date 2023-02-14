@@ -59,7 +59,7 @@ public class Elevator extends SubsystemBase {
     // Check if limit switch is forward or Reverse irl
     // Check if we are going to use Normally closed or Normally open
     // used to sync with encoders
-    public SparkMaxLimitSwitch limitSwitchMotor1 = motorFirst.getForwardLimitSwitch(Type.kNormallyClosed);
+    private SparkMaxLimitSwitch limitSwitchMotorFirst = motorFirst.getForwardLimitSwitch(Type.kNormallyClosed);
 
     // Creates an incremental encoder
     public RelativeEncoder encoder = motorFirst.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
@@ -113,7 +113,7 @@ public class Elevator extends SubsystemBase {
     }
 
     // creates and sets a PID controller
-    public SparkMaxPIDController controllerMotor1 = createAndSetupPIDController(motorFirst);
+    private SparkMaxPIDController controllerMotorFirst = createAndSetupPIDController(motorFirst);
 
     // gets the number of rotations from the encoder
     public double getPosition() {
@@ -122,12 +122,12 @@ public class Elevator extends SubsystemBase {
 
     // Sets the setPoint of the PID controller to whatever was passed as the input
     public void setPosition(double length) {
-        controllerLeftMain.setReference(length, CANSparkMax.ControlType.kPosition);
+        controllerMotorFirst.setReference(length, CANSparkMax.ControlType.kPosition);
     }
 
     // resets the encoder
     public void zeroEncoder() {
-        if (limitSwitchLeftMain.isPressed()) {
+        if (limitSwitchMotorFirst.isPressed()) {
             encoder.setPosition(0);
         } else {
             System.out.println("limit switch is no pressy");
