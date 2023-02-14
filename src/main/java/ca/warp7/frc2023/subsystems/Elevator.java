@@ -21,7 +21,7 @@ public class Elevator extends SubsystemBase {
         return instance;
     }
 
-    public static CANSparkMax createMasterSparkMAX(int deviceID) {
+    private static CANSparkMax createMasterSparkMAX(int deviceID) {
         CANSparkMax master = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
         master.restoreFactoryDefaults();
         master.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
         return master;
     }
 
-    public CANSparkMax createFollowerSparkMAX(int deviceID) {
+    private CANSparkMax createFollowerSparkMAX(int deviceID) {
         CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
         follower.restoreFactoryDefaults();
         follower.follow(motorFirst);
@@ -39,7 +39,7 @@ public class Elevator extends SubsystemBase {
     }
 
     // creates an inverted SparkMAx follower motor
-    public CANSparkMax createFollowerSparkMAXInverted(int deviceID) {
+    private CANSparkMax createFollowerSparkMAXInverted(int deviceID) {
         CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
         follower.restoreFactoryDefaults();
         follower.follow(motorFirst, true);
@@ -49,12 +49,12 @@ public class Elevator extends SubsystemBase {
     }
 
     // makes a leader and a follower motor for the left side
-    public CANSparkMax motorFirst = createMasterSparkMAX(kMotorFirst);
-    public CANSparkMax motorSecond = createFollowerSparkMAX(kMotorSecond);
+    private CANSparkMax motorFirst = createMasterSparkMAX(kMotorFirst);
+    private CANSparkMax motorSecond = createFollowerSparkMAX(kMotorSecond);
 
     // makes the inverted follower motors for the right side
-    public CANSparkMax motorThird = createFollowerSparkMAXInverted(kMotorThird);
-    public CANSparkMax motorFourth = createFollowerSparkMAXInverted(kMotorFourth);
+    private CANSparkMax motorThird = createFollowerSparkMAXInverted(kMotorThird);
+    private CANSparkMax motorFourth = createFollowerSparkMAXInverted(kMotorFourth);
 
     // Check if limit switch is forward or Reverse irl
     // Check if we are going to use Normally closed or Normally open
@@ -62,9 +62,9 @@ public class Elevator extends SubsystemBase {
     private SparkMaxLimitSwitch limitSwitchMotorFirst = motorFirst.getForwardLimitSwitch(Type.kNormallyClosed);
 
     // Creates an incremental encoder
-    public RelativeEncoder encoder = motorFirst.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    private RelativeEncoder encoder = motorFirst.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
     // Method that creates and sets up a PID controller
-    public SparkMaxPIDController createAndSetupPIDController(CANSparkMax motor) {
+    private SparkMaxPIDController createAndSetupPIDController(CANSparkMax motor) {
         SparkMaxPIDController PIDController = motor.getPIDController();
         PIDController.setFeedbackDevice(encoder);
         double kP = 0.1;
@@ -116,17 +116,17 @@ public class Elevator extends SubsystemBase {
     private SparkMaxPIDController controllerMotorFirst = createAndSetupPIDController(motorFirst);
 
     // gets the number of rotations from the encoder
-    public double getPosition() {
+    private double getPosition() {
         return encoder.getPosition();
     }
 
     // Sets the setPoint of the PID controller to whatever was passed as the input
-    public void setPosition(double length) {
+    private void setPosition(double length) {
         controllerMotorFirst.setReference(length, CANSparkMax.ControlType.kPosition);
     }
 
     // resets the encoder
-    public void zeroEncoder() {
+    private void zeroEncoder() {
         if (limitSwitchMotorFirst.isPressed()) {
             encoder.setPosition(0);
         } else {
@@ -135,7 +135,7 @@ public class Elevator extends SubsystemBase {
     }
 
     // fully retracts elevator
-    public void fullyRetract() {
+    private void fullyRetract() {
         setPosition(0);
         zeroEncoder();
     }
