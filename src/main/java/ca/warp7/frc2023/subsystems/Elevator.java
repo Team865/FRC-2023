@@ -142,6 +142,6 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        zeroEncoder();
+        fullyRetract();
     }
 }
