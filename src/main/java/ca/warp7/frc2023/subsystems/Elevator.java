@@ -68,8 +68,8 @@ public class Elevator extends SubsystemBase {
         SparkMaxPIDController PIDController = motor.getPIDController();
         PIDController.setFeedbackDevice(encoder);
         double kP = 0.1;
-        double kI = 1e-4;
-        double kD = 1;
+        double kI = 0;
+        double kD = 0;
         double kIz = 0;
         double kFF = 0;
         double kMaxOutput = 1;
