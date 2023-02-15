@@ -18,16 +18,13 @@ public class RobotContainer {
     spining spin = new spining(intakeing);
     int toggle = 0;
     CommandXboxController controller = new CommandXboxController(1); 
-    XboxController jController = new XboxController(2);
+   
  
     
     
 
     public RobotContainer() {
-        if (jController.getYButtonPressed() ) {
-            System.out.println();
-            intakeing.movemotorCommand();
-        }
+
         configureBindings();
     }
 
