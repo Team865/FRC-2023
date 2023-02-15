@@ -20,18 +20,25 @@ public class intake extends SubsystemBase {
  
   int toggle = 0;
 
-  
+  CANSparkMax motor1 = new CANSparkMax(toggle, MotorType.kBrushless);
+  CANSparkMax motor2 = new CANSparkMax(toggle, MotorType.kBrushless);
+  public void start() {
+    motor1.restoreFactoryDefaults();
+    motor2.restoreFactoryDefaults();
+    motor2.follow(motor1);
+    motor1.set(0.5);
+  }
   public void change()  {
-    if (toggle == 0) {
-      System.out.println(toggle);
-      toggle = 1;
-      return;
-    }
-    if (toggle == 1) {
-      System.out.println(toggle);
-      toggle = 0;
-    }
+    motor1.restoreFactoryDefaults();
+    motor2.restoreFactoryDefaults();
+    motor1.set(0.5);
+    motor2.set(-0.5);
 
+
+  }
+  public void stop(){
+    motor1.set(0);
+    motor2.set(0);
   }
   public CommandBase toggle() {
 
@@ -40,25 +47,16 @@ public class intake extends SubsystemBase {
   
   }
   public CommandBase movemotorCommand() {
-    if (toggle == 0) {
-      System.out.println("togglw");
-      return runOnce(() -> System.out.println("run"));
-    }
-
-    return runOnce(() -> System.out.println("bob"));
-    
+  
+    return runOnce(() -> start());
   
   }
   public CommandBase stopmotorCommand() {
   
-    return runOnce(() -> System.out.println("stoping"));
+    return runOnce(() ->stop());
     
   }
-  public CommandBase reversemotorCommand() {
-  
-    return runOnce(() -> System.out.println("reverseing"));
-    
-  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
