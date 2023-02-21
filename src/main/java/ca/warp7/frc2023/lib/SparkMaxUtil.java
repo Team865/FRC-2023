@@ -76,7 +76,8 @@ public class SparkMaxUtil {
 
         return PIDController;
     }
+}
 
     // We are sorry daniel
     // dont kill us
-}
+
