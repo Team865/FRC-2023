@@ -2,9 +2,9 @@ package ca.warp7.frc2023.lib;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class SparkMaxUtil {
     // utility methods, saves lines and mental capacity
@@ -30,10 +30,10 @@ public class SparkMaxUtil {
         return follower;
     }
 
-    // Method that creates and sets up a PID controller
+    // Method that creates and sets up a PID controller-
     public static SparkMaxPIDController createPIDController(
             CANSparkMax motorGroup,
-            RelativeEncoder motorEncoder,
+            Encoder encoder,
             double kP,
             double kI,
             double kD,
@@ -42,10 +42,13 @@ public class SparkMaxUtil {
             double kMaxAcc) {
 
         SparkMaxPIDController PIDController = motorGroup.getPIDController();
-        PIDController.setFeedbackDevice(motorEncoder);
+        PIDController.setFeedbackDevice((MotorFeedbackSensor) encoder);
         int smartMotionSlot = 0;
-        double kMaxOutput = 1;
-        double kMinOutput = -1;
+        double kMinOutput = -1.0;
+        double kMaxOutput = 1.0;
+
+        // kMax and kMin are being used as output range for the kControllerType controller type.
+        final CANSparkMax.ControlType kControllerType = CANSparkMax.ControlType.kSmartMotion;
 
         PIDController.setP(kP);
         PIDController.setI(kI);
@@ -53,13 +56,13 @@ public class SparkMaxUtil {
         PIDController.setIZone(0); // kIz value
         PIDController.setFF(0); // kFF value
         PIDController.setOutputRange(kMinOutput, kMaxOutput);
-        PIDController.setReference(0, CANSparkMax.ControlType.kSmartMotion);
+        PIDController.setReference(0, kControllerType);
         PIDController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
         PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
         PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
         PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
 
-        // smartdashboard, may need to add specfication if used for other subsytems
+        /*  smartdashboard, may need to add specfication if used for other subsytems
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
@@ -69,9 +72,11 @@ public class SparkMaxUtil {
         SmartDashboard.putNumber("Max Acceleration", kMaxAcc);
         SmartDashboard.putNumber("Set Position", 0);
         SmartDashboard.putNumber("Set Velocity", 0);
+        */
 
         return PIDController;
     }
+
     // We are sorry daniel
     // dont kill us
 }
