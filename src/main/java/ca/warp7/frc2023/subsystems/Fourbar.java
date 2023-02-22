@@ -2,7 +2,7 @@ package ca.warp7.frc2023.subsystems;
 
 import static ca.warp7.frc2023.Constants.*;
 
-import ca.warp7.frc2023.lib.SparkMaxUtil;
+import ca.warp7.frc2023.lib.util.SparkMaxUtil;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -19,8 +19,9 @@ public class Fourbar extends SubsystemBase {
     }
 
     // creates a motorgroup to hold both motors, this is important as different commands could break the fourbar
-    private CANSparkMax motorMain = SparkMaxUtil.createMasterMotor(FOURBAR_MOTOR_PORT_0);
-    private CANSparkMax motorSecondary = SparkMaxUtil.createFollowerMotor(motorMain, FOURBAR_MOTOR_PORT_1, true); // need inversion, stops death
+    private CANSparkMax motorMain = SparkMaxUtil.createMasterMotor(kFourbarMotorPortID0);
+    private CANSparkMax motorSecondary =
+            SparkMaxUtil.createFollowerMotor(motorMain, kFourbarMotorPortID1, true); // need inversion, stops death
 
     // the encoder (incremental)
     private Encoder encoder = (Encoder) motorMain.getEncoder();
@@ -28,6 +29,7 @@ public class Fourbar extends SubsystemBase {
     // create and set a PID controller
     private SparkMaxPIDController controllermotorMain =
             SparkMaxUtil.createPIDController(motorMain, encoder, 0.1, 1e-4, 0, 0, 2000, 1500);
+
     /* Current Values
      *    p = 0.1
      *    i = 1e-4

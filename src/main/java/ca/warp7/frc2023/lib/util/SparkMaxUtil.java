@@ -1,4 +1,4 @@
-package ca.warp7.frc2023.lib;
+package ca.warp7.frc2023.lib.util;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
