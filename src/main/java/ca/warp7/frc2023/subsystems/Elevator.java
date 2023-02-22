@@ -117,12 +117,12 @@ public class Elevator extends SubsystemBase {
 
     // gets the number of rotations from the encoder
     private double getPosition() {
-        return 4 * (encoder.getPosition() * 1.175);
+        return 4*(encoder.getPosition()*1.175);
     }
 
     // Sets the setPoint of the PID controller to whatever was passed as the input
     private void setPosition(double length) {
-        double numOfRotationsHexShaft = (7.0004 - length) / 4;
+        double numOfRotationsHexShaft = (7.0004 - length)/4;
         double numOfRotations = numOfRotationsHexShaft * 97.5;
         controllerMotorFirst.setReference(numOfRotations, CANSparkMax.ControlType.kPosition);
     }
