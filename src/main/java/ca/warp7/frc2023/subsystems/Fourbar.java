@@ -20,8 +20,7 @@ public class Fourbar extends SubsystemBase {
 
     // creates a motorgroup to hold both motors, this is important as different commands could break the fourbar
     private CANSparkMax motorMain = SparkMaxUtil.createMasterMotor(FOURBAR_MOTOR_PORT_0);
-    private CANSparkMax motorSecondary =
-            SparkMaxUtil.createFollowerMotor(motorMain, FOURBAR_MOTOR_PORT_1, true); // need inversion, stops death
+    private CANSparkMax motorSecondary = SparkMaxUtil.createFollowerMotor(motorMain, FOURBAR_MOTOR_PORT_1, true); // need inversion, stops death
 
     // the encoder (incremental)
     private Encoder encoder = (Encoder) motorMain.getEncoder();
@@ -30,13 +29,13 @@ public class Fourbar extends SubsystemBase {
     private SparkMaxPIDController controllermotorMain =
             SparkMaxUtil.createPIDController(motorMain, encoder, 0.1, 1e-4, 0, 0, 2000, 1500);
     /* Current Values
-        p = 0.1
-        i = 1e-4
-        d = 0
-        kMinVel = 0
-        kMaxVel = 2000
-        kMaxAcc = 1500
-    */
+     *    p = 0.1
+     *    i = 1e-4
+     *    d = 0
+     *    kMinVel = 0
+     *    kMaxVel = 2000
+     *    kMaxAcc = 1500
+     */
 
     // gets the number of rotations from the encoder
     public double getPosition() {
@@ -50,6 +49,7 @@ public class Fourbar extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // update position to smartdashboard
         SmartDashboard.putNumber("Fourbar Position", getPosition());
     }
 }
