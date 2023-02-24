@@ -8,31 +8,30 @@ import ca.warp7.frc2023.SubSystems.intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class spining extends CommandBase {
-  /** Creates a new spining. */
-  private intake intakeing;
-  public spining(intake subsystm) {
-    intakeing = subsystm;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeing);
-  }
+    /** Creates a new spining. */
+    private intake intakeing;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    public spining(intake subsystm) {
+        intakeing = subsystm;
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(intakeing);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {}
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {}
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {}
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
