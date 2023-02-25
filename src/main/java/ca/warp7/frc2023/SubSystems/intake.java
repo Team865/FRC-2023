@@ -6,6 +6,8 @@ package ca.warp7.frc2023.SubSystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,10 +17,21 @@ public class intake extends SubsystemBase {
     /** Creates a new newintake. */
     public intake() {}
 
-    int toggle = 0;
+    int motor1id = 0;
+    int motor2id = 1;
+    int motor3id = 3;
 
-    CANSparkMax motor1 = new CANSparkMax(toggle, MotorType.kBrushless);
-    CANSparkMax motor2 = new CANSparkMax(toggle, MotorType.kBrushless);
+    boolean debounce;
+    int kP = 0;
+    int kI = 0;
+    int kD = 0;
+    int setpoint;
+    boolean open = false;
+    CANSparkMax motor1 = new CANSparkMax(motor1id, MotorType.kBrushless);
+    CANSparkMax motor2 = new CANSparkMax(motor2id, MotorType.kBrushless);
+    CANSparkMax motor3 = new CANSparkMax(motor3id, MotorType.kBrushless);
+    RelativeEncoder m_encoder;
+    PIDController pid = new PIDController(kP, kI, kD);
 
     public void start() {
         motor1.restoreFactoryDefaults();
@@ -39,6 +52,20 @@ public class intake extends SubsystemBase {
         motor2.set(0);
     }
 
+    public void close() {
+        if (open == false) {
+            m_encoder = motor3.getEncoder();
+            motor3.set(pid.calculate(m_encoder.getPosition(), setpoint));
+            System.out.println(open);
+            open = true;
+        } else {
+            m_encoder = motor3.getEncoder();
+            motor3.set(pid.calculate(m_encoder.getPosition(), setpoint));
+            System.out.println(open);
+            open = false;
+        }
+    }
+
     public CommandBase toggle() {
 
         return runOnce(() -> change());
@@ -52,6 +79,11 @@ public class intake extends SubsystemBase {
     public CommandBase stopmotorCommand() {
 
         return runOnce(() -> stop());
+    }
+
+    public CommandBase closeInkate() {
+
+        return runOnce(() -> close());
     }
 
     @Override
