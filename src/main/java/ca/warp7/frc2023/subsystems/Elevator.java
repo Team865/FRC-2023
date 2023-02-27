@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance;
@@ -22,6 +23,8 @@ public class Elevator extends SubsystemBase {
         if (instance == null) instance = new Elevator();
         return instance;
     }
+
+    double currentDistence = 0;
 
     private static CANSparkMax createMasterSparkMAX(int deviceID) {
         CANSparkMax master = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
@@ -137,7 +140,10 @@ public class Elevator extends SubsystemBase {
             System.out.println("limit switch is no pressy");
         }
     }
-
+    
+    //creates a 
+    XboxController operatorController = new XboxController(1);
+    
     public CommandBase highGoal() {
         // sets the position to the high position, change this to the actual high position
         return this.runOnce(() -> setPosition(10));
@@ -149,18 +155,11 @@ public class Elevator extends SubsystemBase {
     }
 
     public CommandBase manual() {
-        // add x joystick to this
-        return new RunCommand(() -> this.setPosition(0.01 * 0.01), this);
-    }
-
-    // fully retracts elevator
-    private void fullyRetract() {
-        setPosition(0);
-        zeroEncoder();
+        return new RunCommand(() -> this.setPosition(operatorController.getRightX() + currentDistence), this);
     }
 
     @Override
     public void periodic() {
-        fullyRetract();
+        currentDistence = getPosition();
     }
 }
