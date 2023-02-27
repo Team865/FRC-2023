@@ -8,6 +8,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Fourbar extends SubsystemBase {
@@ -53,6 +54,16 @@ public class Fourbar extends SubsystemBase {
     public void periodic() {
         // update position to smartdashboard
         SmartDashboard.putNumber("Fourbar Position", getPosition());
+    }
+
+    // extend fourbar command
+    public CommandBase extendFourbar() {
+        return this.runOnce(() -> this.setPosition(1));
+    }
+
+    // retract fourbar command
+    public CommandBase retractFourbar() {
+        return this.runOnce(() -> this.setPosition(0));
     }
 }
 

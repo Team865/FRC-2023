@@ -4,7 +4,7 @@
 
 package ca.warp7.frc2023;
 
-import ca.warp7.frc2023.SubSystems.intake;
+import ca.warp7.frc2023.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
