@@ -10,6 +10,8 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -134,6 +136,21 @@ public class Elevator extends SubsystemBase {
         } else {
             System.out.println("limit switch is no pressy");
         }
+    }
+
+    public CommandBase highGoal() {
+        // sets the position to the high position, change this to the actual high position
+        return this.runOnce(() -> setPosition(10));
+    }
+
+    public CommandBase mediumGoal() {
+        // sets the position to the medium goal, change this to the actual medium goal
+        return this.runOnce(() -> this.setPosition(5));
+    }
+
+    public CommandBase manual() {
+        // add x joystick to this
+        return new RunCommand(() -> this.setPosition(0.01 * 0.01), this);
     }
 
     // fully retracts elevator
