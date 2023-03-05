@@ -1,0 +1,49 @@
+package ca.warp7.frc2023.commands;
+
+import ca.warp7.frc2023.Constants.kDrivetrain;
+import ca.warp7.frc2023.Constants.kTeleop;
+import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+public class TeleopDriveCommand extends CommandBase {
+    private SwerveDrivetrainSubsystem swerveDrivetrainSubsystem;
+
+    private DoubleSupplier translationSup, strafeSup, rotationSup;
+    private BooleanSupplier isFieldOrientedSup;
+
+    public TeleopDriveCommand(
+            SwerveDrivetrainSubsystem swerveDrivetrainSubsystem,
+            DoubleSupplier translationSup,
+            DoubleSupplier strafeSup,
+            DoubleSupplier rotationSup,
+            BooleanSupplier isFieldOrientedSup) {
+
+        this.swerveDrivetrainSubsystem = swerveDrivetrainSubsystem;
+        addRequirements(swerveDrivetrainSubsystem);
+
+        this.translationSup = translationSup;
+        this.strafeSup = strafeSup;
+        this.rotationSup = rotationSup;
+        this.isFieldOrientedSup = isFieldOrientedSup;
+    }
+
+    @Override
+    public void execute() {
+
+        // Get values and apply deadband
+        double xMagnitude = MathUtil.applyDeadband(translationSup.getAsDouble(), kTeleop.kStickDeadband);
+        double yMagnitude = MathUtil.applyDeadband(strafeSup.getAsDouble(), kTeleop.kStickDeadband);
+        double rotationMagnitude = MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kStickDeadband);
+
+        // Drive
+        swerveDrivetrainSubsystem.drive(
+                new Translation2d(xMagnitude, yMagnitude).times(kDrivetrain.kMaxSpeed),
+                rotationMagnitude * kDrivetrain.kMaxAngularVelocity,
+                !isFieldOrientedSup.getAsBoolean(),
+                true);
+    }
+}
