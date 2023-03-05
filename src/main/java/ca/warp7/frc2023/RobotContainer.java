@@ -9,6 +9,7 @@ import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
+import ca.warp7.frc2023.commands.SimpleConeAuto;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
@@ -17,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
     private final CommandXboxController primaryOperatorController =
@@ -30,6 +33,8 @@ public class RobotContainer {
     private final FourbarSubsystem fourbarSubsystem = new FourbarSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+
+    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     public RobotContainer() {
         swerveDrivetrainSubsystem.setDefaultCommand(new TeleopDriveCommand(
@@ -53,6 +58,9 @@ public class RobotContainer {
         elevatorSubsystem.setDefaultCommand(new TeleopElevatorCommand(elevatorSubsystem, () -> secondaryOperatorController.getRightY()));
 
         configureBindings();
+
+        autoChooser.setDefaultOption("Default Auto", Commands.print("Default Auto"));
+        autoChooser.addOption("Simple cone auto", new SimpleConeAuto());
     }
 
     private void configureBindings() {
@@ -79,6 +87,7 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         // PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(4, 3));
-        return Commands.print("No auton");
+        // return Commands.print("No auton");
+        return autoChooser.getSelected();
     }
 }
