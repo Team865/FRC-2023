@@ -78,6 +78,10 @@ public class IntakeSubsystem extends SubsystemBase {
         return talonPivotEncoder.getPosition();
     }
 
+    public Command setIntakeSpeedCommand(double bothWheelSpeeds) {
+        return this.runOnce(() -> this.setIntakeSpeed(bothWheelSpeeds));
+    }
+
     @Override
     public void periodic() {
         talonPivotMotorController.setReference(talonPivotSetPoint, ControlType.kPosition);

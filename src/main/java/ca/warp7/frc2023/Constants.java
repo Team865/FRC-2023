@@ -187,5 +187,6 @@ public class Constants {
         public static final int kFrontWheelMotorID = 11;
         public static final int kRearWheelMotorID = 18;
         public static final int kTalonPivotMotorID = 12;
+        public static final double kAutoIntakeSpeed = 10.0;
     }
 }
