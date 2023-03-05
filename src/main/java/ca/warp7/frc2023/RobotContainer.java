@@ -4,12 +4,18 @@
 
 package ca.warp7.frc2023;
 
+import ca.warp7.frc2023.Constants.kControllers;
+import ca.warp7.frc2023.subsystems.Elevator;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
+
+    private final CommandXboxController primaryOperatorController =
+            new CommandXboxController(kControllers.kDriverControllerID);
 
     // create a chooser for autonomous commands
     SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -25,7 +31,10 @@ public class RobotContainer {
         SmartDashboard.putData(m_chooser);
     }
 
-    private void configureBindings() {}
+    private void configureBindings() {
+
+        primaryOperatorController.a().onTrue(Elevator.getInstance().highGoal());
+    }
 
     public Command getAutonomousCommand() {
         // return the selected command

@@ -9,11 +9,11 @@ import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.XboxController;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance;
@@ -27,29 +27,32 @@ public class Elevator extends SubsystemBase {
     double currentDistence = 0;
 
     private static CANSparkMax createMasterSparkMAX(int deviceID) {
-        CANSparkMax master = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
+        CANSparkMax master = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushless);
         master.restoreFactoryDefaults();
         master.setIdleMode(CANSparkMax.IdleMode.kBrake);
         master.enableVoltageCompensation(12.0);
+        master.setSmartCurrentLimit(10);
         return master;
     }
 
     private CANSparkMax createFollowerSparkMAX(int deviceID) {
-        CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
+        CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushless);
         follower.restoreFactoryDefaults();
         follower.follow(motorFirst);
         follower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         follower.enableVoltageCompensation(12.0);
+        follower.setSmartCurrentLimit(10);
         return follower;
     }
 
     // creates an inverted SparkMAx follower motor
     private CANSparkMax createFollowerSparkMAXInverted(int deviceID) {
-        CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushed);
+        CANSparkMax follower = new CANSparkMax(deviceID, CANSparkMaxLowLevel.MotorType.kBrushless);
         follower.restoreFactoryDefaults();
         follower.follow(motorFirst, true);
         follower.setIdleMode(CANSparkMax.IdleMode.kBrake);
         follower.enableVoltageCompensation(12.0);
+        follower.setSmartCurrentLimit(10);
         return follower;
     }
 
@@ -79,7 +82,7 @@ public class Elevator extends SubsystemBase {
         double kFF = 0;
         double kMaxOutput = 1;
         double kMinOutput = -1;
-        int smartMotionSlot = 0;
+        // int smartMotionSlot = 0;
         double kMaxVel = 2000;
         double kMinVel = 0;
         double kMaxAcc = 1500;
@@ -89,11 +92,11 @@ public class Elevator extends SubsystemBase {
         PIDController.setIZone(kIz);
         PIDController.setFF(kFF);
         PIDController.setOutputRange(kMinOutput, kMaxOutput);
-        PIDController.setReference(0, CANSparkMax.ControlType.kSmartMotion);
-        PIDController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
-        PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
-        PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
-        PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
+        PIDController.setReference(0, CANSparkMax.ControlType.kPosition);
+        // PIDController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
+        // PIDController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
+        // PIDController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
+        // PIDController.setSmartMotionAllowedClosedLoopError(kMinOutput, smartMotionSlot);
 
         // display PID coefficients on SmartDashboard
         SmartDashboard.putNumber("P Gain", kP);
@@ -140,13 +143,13 @@ public class Elevator extends SubsystemBase {
             System.out.println("limit switch is no pressy");
         }
     }
-    
-    //creates a 
-    XboxController operatorController = new XboxController(1);
-    
+
+    // creates a
+    XboxController operatorController = new XboxController(0);
+
     public CommandBase highGoal() {
         // sets the position to the high position, change this to the actual high position
-        return this.runOnce(() -> setPosition(10));
+        return this.runOnce(() -> this.setPosition(10));
     }
 
     public CommandBase mediumGoal() {
