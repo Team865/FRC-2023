@@ -21,6 +21,9 @@ public class FourbarSubsystem extends SubsystemBase {
     private double setPointModifier;
 
     public FourbarSubsystem() {
+        position = 0;
+        setPointModifier = 0;
+
         // Create right motor
         motorRight = new CANSparkMax(kFourbar.kFourbarMotorRightID, MotorType.kBrushless);
 

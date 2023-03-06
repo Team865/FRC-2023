@@ -163,6 +163,10 @@ public class Constants {
         public static final double kTriggerDeadband = 0.05;
     }
 
+    public static final class kAuton {
+        public static final double kOuttakeSpeed = -0.8;
+    }
+
     /* Controller USB Order */
     public static final class kControllers {
         public static final int kDriverControllerID = 0;
@@ -187,6 +191,5 @@ public class Constants {
         public static final int kFrontWheelMotorID = 11;
         public static final int kRearWheelMotorID = 18;
         public static final int kTalonPivotMotorID = 12;
-        public static final double kAutoIntakeSpeed = 10.0;
     }
 }

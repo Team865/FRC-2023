@@ -13,6 +13,7 @@ public class TeleopElevatorCommand extends CommandBase {
     public TeleopElevatorCommand(ElevatorSubsystem elevatorSubsystem, DoubleSupplier stickSup) {
 
         this.elevatorSubsystem = elevatorSubsystem;
+        this.stickSup = stickSup;
         addRequirements(elevatorSubsystem);
     }
 
@@ -22,6 +23,6 @@ public class TeleopElevatorCommand extends CommandBase {
         // Get values and apply deadband
         double stickValue = MathUtil.applyDeadband(stickSup.getAsDouble(), kTeleop.kStickDeadband);
 
-        elevatorSubsystem.setSpeed(stickValue);
+        elevatorSubsystem.setSpeed(stickSup.getAsDouble());
     }
 }

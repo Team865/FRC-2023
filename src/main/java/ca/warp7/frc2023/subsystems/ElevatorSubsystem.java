@@ -3,12 +3,10 @@ package ca.warp7.frc2023.subsystems;
 import static ca.warp7.frc2023.Constants.*;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
-import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxRelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,6 +25,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     double setLength = 0;
 
     public ElevatorSubsystem() {
+        setLength = 0;
+
         leftPrimaryMotor = new CANSparkMax(kElevator.kLeftPrimaryMotorID, MotorType.kBrushed);
         leftSecondaryMotor = new CANSparkMax(kElevator.kLeftSecondaryMotorID, MotorType.kBrushed);
         rightPrimaryMotor = new CANSparkMax(kElevator.kRightPrimaryMotorID, MotorType.kBrushed);
@@ -47,9 +47,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightPrimaryMotor.setSmartCurrentLimit(15);
         rightSecondaryMotor.setSmartCurrentLimit(15);
 
+        leftPrimaryMotor.setInverted(true);
+
         leftSecondaryMotor.follow(leftPrimaryMotor, false);
         rightPrimaryMotor.follow(leftPrimaryMotor, true);
-        rightSecondaryMotor.follow(leftPrimaryMotor, true);
+        rightSecondaryMotor.follow(leftPrimaryMotor, false);
 
         // motorLimitSwitch = rightPrimaryMotor.getReverseLimitSwitch(
         //         Type.kNormallyClosed); // TODO: change to correct motor and nomal type
@@ -70,7 +72,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        leftPrimaryMotor.set(speed * 0.1);
+        leftPrimaryMotor.set(speed * 0.8);
     }
 
     private double getPosition() {

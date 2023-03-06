@@ -13,14 +13,15 @@ public class TeleopDriveCommand extends CommandBase {
     private SwerveDrivetrainSubsystem swerveDrivetrainSubsystem;
 
     private DoubleSupplier translationSup, strafeSup, rotationSup;
-    private BooleanSupplier isFieldOrientedSup;
+    private BooleanSupplier isRobotOrientedSup, isSlowModeSup;
 
     public TeleopDriveCommand(
             SwerveDrivetrainSubsystem swerveDrivetrainSubsystem,
             DoubleSupplier translationSup,
             DoubleSupplier strafeSup,
             DoubleSupplier rotationSup,
-            BooleanSupplier isFieldOrientedSup) {
+            BooleanSupplier isRobotOrientedSup,
+            BooleanSupplier isSlowModeSup) {
 
         this.swerveDrivetrainSubsystem = swerveDrivetrainSubsystem;
         addRequirements(swerveDrivetrainSubsystem);
@@ -28,7 +29,8 @@ public class TeleopDriveCommand extends CommandBase {
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
-        this.isFieldOrientedSup = isFieldOrientedSup;
+        this.isRobotOrientedSup = isRobotOrientedSup;
+        this.isSlowModeSup = isSlowModeSup;
     }
 
     @Override
@@ -39,11 +41,17 @@ public class TeleopDriveCommand extends CommandBase {
         double yMagnitude = MathUtil.applyDeadband(strafeSup.getAsDouble(), kTeleop.kStickDeadband);
         double rotationMagnitude = MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kStickDeadband);
 
+        if (isSlowModeSup.getAsBoolean()) {
+            xMagnitude *= 0.5;
+            yMagnitude *= 0.5;
+            rotationMagnitude *= 0.5;
+        }
+
         // Drive
         swerveDrivetrainSubsystem.drive(
                 new Translation2d(xMagnitude, yMagnitude).times(kDrivetrain.kMaxSpeed),
                 rotationMagnitude * kDrivetrain.kMaxAngularVelocity,
-                !isFieldOrientedSup.getAsBoolean(),
+                !isRobotOrientedSup.getAsBoolean(),
                 true);
     }
 }

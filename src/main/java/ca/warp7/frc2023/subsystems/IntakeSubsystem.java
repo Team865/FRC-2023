@@ -66,10 +66,6 @@ public class IntakeSubsystem extends SubsystemBase {
         rearWheelMotor.set(rearWheelSpeeds * kIntake.kMaxIntakePercentOut);
     }
 
-    public Command setTalonPivotSetPoint(double setPoint) {
-        return this.runOnce(() -> this.talonPivotSetPoint = setPoint);
-    }
-
     public void zeroEncoder() {
         talonPivotEncoder.setPosition(0);
     }
@@ -80,6 +76,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public Command setIntakeSpeedCommand(double bothWheelSpeeds) {
         return this.runOnce(() -> this.setIntakeSpeed(bothWheelSpeeds));
+    }
+
+    public Command setTalonPivotSetPoint(double setPoint) {
+        return this.runOnce(() -> this.talonPivotSetPoint = setPoint);
     }
 
     @Override

@@ -9,17 +9,18 @@ import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
-import ca.warp7.frc2023.commands.SimpleConeAuto;
+import ca.warp7.frc2023.commands.auton.MobiltyCone;
+import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
 import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
     private final CommandXboxController primaryOperatorController =
@@ -42,52 +43,51 @@ public class RobotContainer {
                 () -> -primaryOperatorController.getLeftY(),
                 () -> -primaryOperatorController.getLeftX(),
                 () -> -primaryOperatorController.getRightX(),
-                () -> primaryOperatorController.leftBumper().getAsBoolean()));
+                () -> primaryOperatorController.leftBumper().getAsBoolean(),
+                () -> primaryOperatorController.rightBumper().getAsBoolean()));
 
         intakeSubsystem.setDefaultCommand(new TeleopIntakeCommand(
                 intakeSubsystem,
-                () -> secondaryOperatorController.back().getAsBoolean(),
-                () -> secondaryOperatorController.a().getAsBoolean(),
-                () -> secondaryOperatorController.getRightTriggerAxis(),
-                () -> secondaryOperatorController.getLeftTriggerAxis(),
-                () -> secondaryOperatorController.getRightTriggerAxis(),
-                () -> secondaryOperatorController.getRightY()));
+                () -> secondaryOperatorController.rightBumper().getAsBoolean(),
+                () -> secondaryOperatorController.leftBumper().getAsBoolean(),
+                () -> secondaryOperatorController.getRightTriggerAxis()));
 
-        fourbarSubsystem.setDefaultCommand(new TeleopFourbarCommand(fourbarSubsystem, () -> secondaryOperatorController.getLeftY()));
 
-        elevatorSubsystem.setDefaultCommand(new TeleopElevatorCommand(elevatorSubsystem, () -> secondaryOperatorController.getRightY()));
+        fourbarSubsystem.setDefaultCommand(
+                new TeleopFourbarCommand(fourbarSubsystem, () -> secondaryOperatorController.getLeftY()));
+
+        elevatorSubsystem.setDefaultCommand(
+                new TeleopElevatorCommand(elevatorSubsystem, () -> secondaryOperatorController.getRightY()));
 
         configureBindings();
 
-        autoChooser.setDefaultOption("Default Auto", Commands.print("Default Auto"));
-        autoChooser.addOption("Simple cone auto", new SimpleConeAuto());
+        configureAuto();
+    }
+
+    private void configureAuto() {
+        autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
+        autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
+        autoChooser.addOption("Cone and mobilty", new MobiltyCone(intakeSubsystem, swerveDrivetrainSubsystem));
+        SmartDashboard.putData("autoChooser", autoChooser);
     }
 
     private void configureBindings() {
         primaryOperatorController.back().onTrue(new InstantCommand(swerveDrivetrainSubsystem::zeroGyro));
         primaryOperatorController
-                .b()
+                .leftStick()
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));
+        primaryOperatorController.a().onTrue(new InstantCommand(swerveDrivetrainSubsystem::brake));
 
-        secondaryOperatorController.x().onTrue(fourbarSubsystem.setPosition(0));
-        secondaryOperatorController.y().onTrue(fourbarSubsystem.setPosition(25));
-        secondaryOperatorController.b().onTrue(fourbarSubsystem.setPosition(57.5));
+        secondaryOperatorController.a().onTrue(fourbarSubsystem.setPosition(0));
+        secondaryOperatorController.x().onTrue(fourbarSubsystem.setPosition(25));
+        secondaryOperatorController.y().onTrue(fourbarSubsystem.setPosition(57.5));
 
-        secondaryOperatorController.povUp().onTrue(intakeSubsystem.setTalonPivotSetPoint(-15));
-
-        
-
-        // secondaryOperatorController.povUp().onTrue(elevatorSubsystem.highGoal());
-        secondaryOperatorController.povLeft().onTrue(elevatorSubsystem.startPosition());
-        secondaryOperatorController.povDown().onTrue(elevatorSubsystem.mediumGoal());
-
-        secondaryOperatorController.leftBumper().onTrue(intakeSubsystem.setTalonPivotSetPoint(-5));
-        secondaryOperatorController.rightBumper().onTrue(intakeSubsystem.setTalonPivotSetPoint(-25));
+        secondaryOperatorController.povDown().onTrue(intakeSubsystem.setTalonPivotSetPoint(-5));
+        secondaryOperatorController.povLeft().onTrue(intakeSubsystem.setTalonPivotSetPoint(-15));
+        secondaryOperatorController.povUp().onTrue(intakeSubsystem.setTalonPivotSetPoint(-25));
     }
 
     public Command getAutonomousCommand() {
-        // PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(4, 3));
-        // return Commands.print("No auton");
         return autoChooser.getSelected();
     }
 }

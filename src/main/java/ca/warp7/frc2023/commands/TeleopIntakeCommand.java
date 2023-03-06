@@ -10,45 +10,33 @@ import java.util.function.DoubleSupplier;
 public class TeleopIntakeCommand extends CommandBase {
     private IntakeSubsystem intakeSubsystem;
 
-    private DoubleSupplier frontWheelSpeedSup, rearWheelSpeedSup, bothWheelSpeedSup, talonPivotSetPointSup;
-    private BooleanSupplier controlSpeedsSeparateSup, reverseSpeedsSup;
+    private DoubleSupplier frontWheelSpeedSup, rearWheelSpeedSup, bothWheelSpeedSup;
+    private BooleanSupplier isCubeIntakeSup, reverseSpeedsSup;
     private double frontWheelSpeed, rearWheelSpeed, bothWheelSpeed;
 
     public TeleopIntakeCommand(
             IntakeSubsystem intakeSubsystem,
-            BooleanSupplier controlSpeedsSeparateSup,
+            BooleanSupplier isCubeIntakeSup,
             BooleanSupplier reverseSpeedsSup,
-            DoubleSupplier frontWheelSpeedSup,
-            DoubleSupplier rearWheelSpeedSup,
-            DoubleSupplier bothWheelSpeedSup,
-            DoubleSupplier talonPivotSetPointSup) {
+            DoubleSupplier bothWheelSpeedSup) {
 
         this.intakeSubsystem = intakeSubsystem;
         addRequirements(intakeSubsystem);
 
         this.reverseSpeedsSup = reverseSpeedsSup;
-        this.controlSpeedsSeparateSup = controlSpeedsSeparateSup;
-        this.frontWheelSpeedSup = frontWheelSpeedSup;
-        this.rearWheelSpeedSup = rearWheelSpeedSup;
+        this.isCubeIntakeSup = isCubeIntakeSup;
+
         this.bothWheelSpeedSup = bothWheelSpeedSup;
-        this.talonPivotSetPointSup = talonPivotSetPointSup;
     }
 
     @Override
     public void execute() {
-        if (reverseSpeedsSup.getAsBoolean()) {
-            frontWheelSpeed = MathUtil.applyDeadband(-frontWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
-            rearWheelSpeed = MathUtil.applyDeadband(-rearWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
-            bothWheelSpeed = MathUtil.applyDeadband(-bothWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
+        bothWheelSpeed = MathUtil.applyDeadband(bothWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
 
-        } else {
-            frontWheelSpeed = MathUtil.applyDeadband(frontWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
-            rearWheelSpeed = MathUtil.applyDeadband(rearWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
-            bothWheelSpeed = MathUtil.applyDeadband(bothWheelSpeedSup.getAsDouble(), kTeleop.kTriggerDeadband);
-        }
+        bothWheelSpeed = reverseSpeedsSup.getAsBoolean() ? bothWheelSpeed * -1 : bothWheelSpeed;
 
-        if (controlSpeedsSeparateSup.getAsBoolean()) {
-            intakeSubsystem.setIntakeSpeed(frontWheelSpeed, rearWheelSpeed);
+        if (isCubeIntakeSup.getAsBoolean()) {
+            intakeSubsystem.setIntakeSpeed(frontWheelSpeed, -rearWheelSpeed);
         } else {
             intakeSubsystem.setIntakeSpeed(bothWheelSpeed);
         }

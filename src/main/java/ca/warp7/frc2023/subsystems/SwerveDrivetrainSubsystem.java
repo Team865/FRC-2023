@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrivetrainSubsystem extends SubsystemBase {
@@ -121,9 +122,6 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      * @return Rotation2d of yaw
      */
     public Rotation2d getYawRotation2d() {
-
-        SmartDashboard.putBoolean("Is Magnetometer Calibrated", navX.isMagnetometerCalibrated());
-
         // Don't use fused heading even if available for. Fix later TODO
         return false ? Rotation2d.fromDegrees(navX.getFusedHeading()) : Rotation2d.fromDegrees(360 - navX.getYaw());
     }
@@ -137,6 +135,14 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         }
     }
 
+    public void brake() {
+        SwerveModuleUtil[] swerveModules = this.swerveModules;
+        swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
+        swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
+        swerveModules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
+        swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
+    }
+
     // TODO: No idea how this works yet lol
     // public SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
     //         Constants.kDrivetrain.kSwerveDriveKinematics,
@@ -144,37 +150,12 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     //         getSwerveModulePositions(),
     //         new Pose2d(),
     //         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-    //         VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+    //         VecBuilder.fill(0.5, 0.5, Units.degr333333333333333333333333333333333333eesToRadians(30)));
 
-    // TODO: Auton
-    // public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-    //     return new SequentialCommandGroup(
-    //             new InstantCommand(() -> {
-    //                 // Reset odometry for the first path you run during auto
-    //                 if (isFirstPath) {
-    //                     this.resetOdometry(traj.getInitialHolonomicPose());
-    //                 }
-    //             }),
-    //             new PPSwerveControllerCommand(
-    //                     traj,
-    //                     this::getPose, // Pose supplier
-    //                     kDrivetrain.kSwerveDriveKinematics, // SwerveDriveKinematics
-    //                     new PIDController(
-    //                             0, 0,
-    //                             0), // X controller. Tune these values for your robot. Leaving them 0 will only use
-    //                     // feedforwards.
-    //                     new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
-    //                     new PIDController(
-    //                             0, 0,
-    //                             0), // Rotation controller. Tune these values for your robot. Leaving them 0 will
-    // only
-    //                     // use feedforwards.
-    //                     this::Swer, // Module states consumer
-    //                     true, // Should the path be automatically mirrored depending on alliance color. Optional,
-    //                     // defaults to true
-    //                     this // Requires this drive subsystem
-    //                     ));
-    // }
+    public Command mobilty() {
+        return run(
+                () -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
+    }
 
     /**
      * Looped subsystem code
@@ -186,16 +167,5 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Is Magnetometer Calibrated", navX.isMagnetometerCalibrated());
         SmartDashboard.putNumber("NavX rotation", getYawRotation2d().getDegrees());
-
-        for (SwerveModuleUtil module : swerveModules) {
-
-            SmartDashboard.putNumber(
-                    "Mod " + module.moduleID + " Cancoder",
-                    module.getExternalSteerEncodeRotation2d().getDegrees());
-            SmartDashboard.putNumber(
-                    "Mod " + module.moduleID + " Integrated",
-                    module.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + module.moduleID + " Velocity", module.getState().speedMetersPerSecond);
-        }
     }
 }
