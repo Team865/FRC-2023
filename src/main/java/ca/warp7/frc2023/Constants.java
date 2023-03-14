@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
+import com.pathplanner.lib.auto.PIDConstants;
 public class Constants {
 
     /* Drivetrain Information */
@@ -165,6 +166,13 @@ public class Constants {
 
     public static final class kAuton {
         public static final double kOuttakeSpeed = -0.8;
+        public static final double kMaxSpeedMetersPerSecond = 8;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 4;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI * 3;
+
+        public static final PIDConstants translationPID = new PIDConstants(3, 0.05, 0);
+        public static final PIDConstants rotationPID = new PIDConstants(1, 0, 0.05);
     }
 
     /* Controller USB Order */

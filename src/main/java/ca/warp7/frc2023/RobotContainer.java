@@ -4,6 +4,8 @@
 
 package ca.warp7.frc2023;
 
+import java.util.Hashtable;
+
 import ca.warp7.frc2023.Constants.kControllers;
 import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
@@ -22,6 +24,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
+//Auto stuff
+import ca.warp7.frc2023.commands.auton.*;
+
 public class RobotContainer {
     private final CommandXboxController primaryOperatorController =
             new CommandXboxController(kControllers.kDriverControllerID);
@@ -36,6 +41,9 @@ public class RobotContainer {
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+    /* Auto */
+    Hashtable<String, AutoImpl> autoCommands = new Hashtable<String, AutoImpl>();
 
     public RobotContainer() {
         swerveDrivetrainSubsystem.setDefaultCommand(new TeleopDriveCommand(

@@ -1,6 +1,7 @@
 package ca.warp7.frc2023.subsystems;
 
 import ca.warp7.frc2023.Constants;
+import ca.warp7.frc2023.Constants.kDrivetrain;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.util.Units;
 
 public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
@@ -95,6 +97,14 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         return states;
     }
 
+    public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, kDrivetrain.kMaxSpeed);
+
+    for (SwerveModuleUtil module : swerveModules) {
+        module.setDesiredState(desiredStates[module.moduleID], false);
+    }
+}
+
     /**
      * Gets the positions of positions of swerve modules
      *
@@ -144,13 +154,14 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     }
 
     // TODO: No idea how this works yet lol
-    // public SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
-    //         Constants.kDrivetrain.kSwerveDriveKinematics,
-    //         getYawRotation2d(),
-    //         getSwerveModulePositions(),
-    //         new Pose2d(),
-    //         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-    //         VecBuilder.fill(0.5, 0.5, Units.degr333333333333333333333333333333333333eesToRadians(30)));
+    public SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
+            kDrivetrain.kSwerveDriveKinematics,
+            getYawRotation2d(),
+            getSwerveModulePositions(),
+            new Pose2d(),
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
+    );
 
     public Command mobilty() {
         return run(
