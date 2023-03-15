@@ -12,7 +12,6 @@ public class MobiltyCone extends SequentialCommandGroup {
                 intakeSubsystem.setIntakeSpeedCommand(kAuton.kOuttakeSpeed),
                 Commands.waitSeconds(1.0),
                 intakeSubsystem.setIntakeSpeedCommand(0.0),
-                swerveDrivetrainSubsystem.mobilty().withTimeout(5.5)
-                );
+                swerveDrivetrainSubsystem.mobilty().withTimeout(5.5));
     }
 }

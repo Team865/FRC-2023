@@ -4,15 +4,15 @@
 
 package ca.warp7.frc2023;
 
-import java.util.Hashtable;
-
 import ca.warp7.frc2023.Constants.kControllers;
 import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
+import ca.warp7.frc2023.commands.auton.AutoImpl;
 import ca.warp7.frc2023.commands.auton.MobiltyCone;
 import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
+import ca.warp7.frc2023.commands.auton.TestPath;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
@@ -23,9 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-//Auto stuff
-import ca.warp7.frc2023.commands.auton.*;
+import java.util.Hashtable;
 
 public class RobotContainer {
     private final CommandXboxController primaryOperatorController =
@@ -60,7 +58,6 @@ public class RobotContainer {
                 () -> secondaryOperatorController.leftBumper().getAsBoolean(),
                 () -> secondaryOperatorController.getRightTriggerAxis()));
 
-
         fourbarSubsystem.setDefaultCommand(
                 new TeleopFourbarCommand(fourbarSubsystem, () -> secondaryOperatorController.getLeftY()));
 
@@ -76,6 +73,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
         autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
         autoChooser.addOption("Cone and mobilty", new MobiltyCone(intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption("Test Path", new TestPath(swerveDrivetrainSubsystem).getCommand());
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 

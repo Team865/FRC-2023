@@ -5,6 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public interface AutoImpl {
     Pose2d getInitialHolonomicPose();
-  
+
     Command getCommand();
-  }
+}
