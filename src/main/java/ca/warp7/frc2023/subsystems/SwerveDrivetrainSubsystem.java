@@ -4,6 +4,8 @@ import ca.warp7.frc2023.Constants;
 import ca.warp7.frc2023.Constants.kDrivetrain;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,12 +14,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.util.Units;
 
 public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
@@ -98,12 +100,12 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, kDrivetrain.kMaxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, kDrivetrain.kMaxSpeed);
 
-    for (SwerveModuleUtil module : swerveModules) {
-        module.setDesiredState(desiredStates[module.moduleID], false);
+        for (SwerveModuleUtil module : swerveModules) {
+            module.setDesiredState(desiredStates[module.moduleID], false);
+        }
     }
-}
 
     /**
      * Gets the positions of positions of swerve modules
@@ -160,12 +162,15 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
             getSwerveModulePositions(),
             new Pose2d(),
             VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
-    );
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+
+    // https://github.com/FRC3161/ChargedUp2023/blob/main/src/main/java/frc/robot/subsystems/PoseEstimator.java
+    public void setCurrentPose(Pose2d newPose) {
+        swerveDrivePoseEstimator.resetPosition(getYawRotation2d(), getSwerveModulePositions(), newPose);
+    }
 
     public Command mobilty() {
-        return run(
-                () -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
+        return run(() -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
     }
 
     /**
