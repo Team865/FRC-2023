@@ -1,24 +1,18 @@
-package ca.warp7.frc2023.lib.util;
+// package ca.warp7.frc2023.lib.util;
 
-import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
+// import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 
-public class MotorControllerUtil {
+// public class MotorControllerUtil {
 
-    public static class MCUTalonFX {
-        public static final int kTalonFXEncoderResolution = 2048;
+//     public static class MCUTalonFX {
+//         public static final int kTalonFXEncoderResolution = 2048;
 
-        public static double getEncoderPosition(TalonFXSensorCollection sensorCollection) {
-            return sensorCollection.getIntegratedSensorPosition();
-        }
+//         public static double getEncoderPosition(TalonFXSensorCollection sensorCollection) {
+//             return sensorCollection.getIntegratedSensorPosition();
+//         }
 
-        public static double getEncoderRealPosition(TalonFXSensorCollection sensorCollection) {
-            return sensorCollection.getIntegratedSensorPosition() / kTalonFXEncoderResolution;
-        }
-
-        public static double getEncoderAbsolutePosition(TalonFXSensorCollection sensorCollection) {
-            return sensorCollection.getIntegratedSensorAbsolutePosition();
-        }
-
-        public static void setEncoderAbsolute() {}
-    }
-}
+//         public static double getEncoderRealPosition(TalonFXSensorCollection sensorCollection) {
+//             return sensorCollection.getIntegratedSensorPosition() / kTalonFXEncoderResolution;
+//         }
+//     }
+// }
