@@ -153,8 +153,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     //         VecBuilder.fill(0.5, 0.5, Units.degr333333333333333333333333333333333333eesToRadians(30)));
 
     public Command mobilty() {
-        return run(
-                () -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
+        return run(() -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
     }
 
     /**

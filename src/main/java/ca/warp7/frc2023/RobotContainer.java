@@ -52,7 +52,6 @@ public class RobotContainer {
                 () -> secondaryOperatorController.leftBumper().getAsBoolean(),
                 () -> secondaryOperatorController.getRightTriggerAxis()));
 
-
         fourbarSubsystem.setDefaultCommand(
                 new TeleopFourbarCommand(fourbarSubsystem, () -> secondaryOperatorController.getLeftY()));
 
