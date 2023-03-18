@@ -25,9 +25,11 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
     public SwerveDriveOdometry swerveDriveOdometry;
     public AHRS navX;
+    public SwerveDrivePoseEstimator swerveDrivePoseEstimator_warp;
 
     public SwerveDrivetrainSubsystem() {
-        navX = new AHRS(SPI.Port.kMXP);
+        this.navX = new AHRS(SPI.Port.kMXP);
+        System.out.println(this.navX.getYaw());
         zeroGyro();
 
         // Creates the swerve modules, Each module is assigned an ID
@@ -44,6 +46,15 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
         swerveDriveOdometry = new SwerveDriveOdometry(
                 Constants.kDrivetrain.kSwerveDriveKinematics, getYawRotation2d(), getSwerveModulePositions());
+
+            // TODO: No idea how this works yet lol
+        swerveDrivePoseEstimator_warp = new SwerveDrivePoseEstimator(
+        kDrivetrain.kSwerveDriveKinematics,
+        getYawRotation2d(),
+        getSwerveModulePositions(),
+        new Pose2d(),
+        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
     }
 
     /**
@@ -124,7 +135,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      * Zeroes the navX
      */
     public void zeroGyro() {
-        navX.zeroYaw();
+        this.navX.zeroYaw();
     }
 
     /**
@@ -135,7 +146,8 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      */
     public Rotation2d getYawRotation2d() {
         // Don't use fused heading even if available for. Fix later TODO
-        return false ? Rotation2d.fromDegrees(navX.getFusedHeading()) : Rotation2d.fromDegrees(360 - navX.getYaw());
+        System.out.println(this.navX);
+        return false ? Rotation2d.fromDegrees(navX.getFusedHeading()) : Rotation2d.fromDegrees(360 - this.navX.getYaw());
     }
 
     /**
@@ -155,18 +167,11 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
     }
 
-    // TODO: No idea how this works yet lol
-    public SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
-            kDrivetrain.kSwerveDriveKinematics,
-            getYawRotation2d(),
-            getSwerveModulePositions(),
-            new Pose2d(),
-            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
-    // https://github.com/FRC3161/ChargedUp2023/blob/main/src/main/java/frc/robot/subsystems/PoseEstimator.java
+
+    //https://github.com/FRC3161/ChargedUp2023/blob/main/src/main/java/frc/robot/subsystems/PoseEstimator.java
     public void setCurrentPose(Pose2d newPose) {
-        swerveDrivePoseEstimator.resetPosition(getYawRotation2d(), getSwerveModulePositions(), newPose);
+        swerveDrivePoseEstimator_warp.resetPosition(getYawRotation2d(), getSwerveModulePositions(), newPose);
     }
 
     public Command mobilty() {

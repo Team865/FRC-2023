@@ -44,6 +44,8 @@ public class RobotContainer {
     Hashtable<String, AutoImpl> autoCommands = new Hashtable<String, AutoImpl>();
 
     public RobotContainer() {
+        configureAuto();
+
         swerveDrivetrainSubsystem.setDefaultCommand(new TeleopDriveCommand(
                 swerveDrivetrainSubsystem,
                 () -> -primaryOperatorController.getLeftY(),
@@ -65,8 +67,6 @@ public class RobotContainer {
                 new TeleopElevatorCommand(elevatorSubsystem, () -> secondaryOperatorController.getRightY()));
 
         configureBindings();
-
-        configureAuto();
     }
 
     private void configureAuto() {
