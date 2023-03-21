@@ -27,7 +27,7 @@ public class Constants {
         public static final double kDriveGearRatio = 6.75 / 1;
         public static final double kSteerGearRatio = (150.0 / 7.0) / 1.0;
 
-        public static final SVAConfig kDriveFeedforward = new SVAConfig(0, 0, 0);
+        public static final SVAConfig kDriveFeedforward = new SVAConfig(0.21964, 2.1732, 0.5249);
 
         public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(kDrivetrain.kTrackWidth / 2.0, kDrivetrain.kWheelBase / 2.0),
@@ -159,7 +159,9 @@ public class Constants {
     }
 
     public static final class kTeleop {
-        public static final double kStickDeadband = 0.15;
+        public static final double kStickDeadband = 0.05;
+        public static final double kElevatorStickDeadband = 0.10;
+        public static final double kFourbarStickDeadband = 0.25;
         public static final double kTriggerDeadband = 0.05;
     }
 
