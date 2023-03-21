@@ -4,8 +4,6 @@ import ca.warp7.frc2023.Constants;
 import ca.warp7.frc2023.Constants.kDrivetrain;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,7 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,15 +41,6 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
         swerveDriveOdometry = new SwerveDriveOdometry(
                 Constants.kDrivetrain.kSwerveDriveKinematics, getYawRotation2d(), getSwerveModulePositions());
-
-            // TODO: No idea how this works yet lol
-        swerveDrivePoseEstimator_warp = new SwerveDrivePoseEstimator(
-        kDrivetrain.kSwerveDriveKinematics,
-        getYawRotation2d(),
-        getSwerveModulePositions(),
-        new Pose2d(),
-        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
     }
 
     /**
@@ -110,7 +98,6 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, kDrivetrain.kMaxSpeed);
-
         for (SwerveModuleUtil module : swerveModules) {
             module.setDesiredState(desiredStates[module.moduleID], false);
         }
@@ -144,8 +131,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      */
     public Rotation2d getYawRotation2d() {
         // Don't use fused heading even if available for. Fix later TODO
-        System.out.println(this.navX);
-        return false ? Rotation2d.fromDegrees(navX.getFusedHeading()) : Rotation2d.fromDegrees(360 - this.navX.getYaw());
+        return false ? Rotation2d.fromDegrees(navX.getFusedHeading()) : Rotation2d.fromDegrees(360 - navX.getYaw());
     }
 
     /**
@@ -163,13 +149,6 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
         swerveModules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
         swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
-    }
-
-
-
-    //https://github.com/FRC3161/ChargedUp2023/blob/main/src/main/java/frc/robot/subsystems/PoseEstimator.java
-    public void setCurrentPose(Pose2d newPose) {
-        swerveDrivePoseEstimator_warp.resetPosition(getYawRotation2d(), getSwerveModulePositions(), newPose);
     }
 
     public Command mobilty() {
