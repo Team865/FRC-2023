@@ -119,8 +119,9 @@ public class SwerveModuleUtil {
      * @return
      */
     public double getDistance() {
-        return Conversions.falconToMPS(
+        double temp = Conversions.falconToMPS(
                 driveMotor.getSelectedSensorPosition(), kDrivetrain.kWheelCircumference, kDrivetrain.kDriveGearRatio);
+        return temp;
     }
 
     /**
