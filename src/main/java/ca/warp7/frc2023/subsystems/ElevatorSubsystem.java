@@ -5,10 +5,11 @@ import static ca.warp7.frc2023.Constants.*;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.SparkMaxLimitSwitch;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.SparkMaxLimitSwitch.Type;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,9 +21,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private CANSparkMax rightSecondaryMotor;
 
     private SparkMaxLimitSwitch motorLimitSwitch;
-    private SparkMaxPIDController motorController;
-    private RelativeEncoder motorEncoder;
-    double setLength = 0;
+    private PIDController motorController;
+    private Encoder encoder;
+    private MotorFeedbackSensor motorFeedbackSensor;
+    double setLength;
 
     public ElevatorSubsystem() {
         setLength = 0;
@@ -32,62 +34,75 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightPrimaryMotor = new CANSparkMax(kElevator.kRightPrimaryMotorID, MotorType.kBrushed);
         rightSecondaryMotor = new CANSparkMax(kElevator.kRightSecondaryMotorID, MotorType.kBrushed);
 
-        leftPrimaryMotor.restoreFactoryDefaults();
-        leftSecondaryMotor.restoreFactoryDefaults();
-        rightPrimaryMotor.restoreFactoryDefaults();
-        rightSecondaryMotor.restoreFactoryDefaults();
+        leftSecondaryMotor.follow(leftPrimaryMotor);
+        rightPrimaryMotor.follow(leftPrimaryMotor);
+        rightSecondaryMotor.follow(leftPrimaryMotor);
+
+        // leftPrimaryMotor.restoreFactoryDefaults();
+        // leftSecondaryMotor.restoreFactoryDefaults();
+        // rightPrimaryMotor.restoreFactoryDefaults();
+        // rightSecondaryMotor.restoreFactoryDefaults();
 
         leftPrimaryMotor.setIdleMode(IdleMode.kBrake);
         leftSecondaryMotor.setIdleMode(IdleMode.kBrake);
         rightPrimaryMotor.setIdleMode(IdleMode.kBrake);
         rightSecondaryMotor.setIdleMode(IdleMode.kBrake);
 
-        leftPrimaryMotor.setSmartCurrentLimit(15);
-        leftSecondaryMotor.setSmartCurrentLimit(15);
-        rightPrimaryMotor.setSmartCurrentLimit(15);
-        rightSecondaryMotor.setSmartCurrentLimit(15);
+        // leftPrimaryMotor.setSmartCurrentLimit(15);
+        // leftSecondaryMotor.setSmartCurrentLimit(15);
+        // rightPrimaryMotor.setSmartCurrentLimit(15);
+        // rightSecondaryMotor.setSmartCurrentLimit(15);
 
-        leftPrimaryMotor.setInverted(true);
+        // leftPrimaryMotor.setInverted(true);
+        // rightPrimaryMotor.setInverted(false);
 
-        leftSecondaryMotor.follow(leftPrimaryMotor, false);
-        rightPrimaryMotor.follow(leftPrimaryMotor, true);
-        rightSecondaryMotor.follow(leftPrimaryMotor, false);
+        // leftSecondaryMotor.follow(leftPrimaryMotor, true);
+        // rightSecondaryMotor.follow(rightPrimaryMotor);
 
-        // motorLimitSwitch = rightPrimaryMotor.getReverseLimitSwitch(
-        //         Type.kNormallyClosed); // TODO: change to correct motor and nomal type
+        motorLimitSwitch = rightPrimaryMotor.getReverseLimitSwitch(Type.kNormallyClosed);
 
-        motorEncoder = leftPrimaryMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 8192);
+        motorController = new PIDController(0.5, 0, 0);
 
-        motorController = leftPrimaryMotor.getPIDController();
-        configController();
+        encoder = new Encoder(0, 1, true);
+        encoder.reset();
+        encoder.setDistancePerPulse(1 / (24.38 * 2 * Math.PI * 0.8755));
+
+        // configController();
     }
+
+    private void configMotor() {}
 
     private void configController() {
         motorController.setP(0.1);
         motorController.setI(0);
         motorController.setD(0);
-        motorController.setIZone(0);
-        motorController.setFF(0);
-        motorController.setOutputRange(-0.6, 0.6);
     }
 
     public void setSpeed(double speed) {
-        leftPrimaryMotor.set(speed * 0.8);
+        if ((motorLimitSwitch.isPressed() && speed <= 0) || encoder.getDistance() < -0.5) {
+            leftPrimaryMotor.set(0);
+            encoder.reset();
+        } else {
+            leftPrimaryMotor.set(speed);
+        }
+
+        // System.out.println(leftPrimaryMotor.getOutputCurrent());
+        // System.out.println(leftPrimaryMotor.getVoltageCompensationNominalVoltage());
+        // rightPrimaryMotor.set(speed);
     }
 
     private double getPosition() {
         // return 4 * (motorEncoder.getPosition() * 1.751);
-        return motorEncoder.getPosition();
+        // return motorEncoder.getPosition();
+        return 0;
     }
 
     private void setPosition(double length) {
-        // double numOfRotationsHexShaft = ((1.751 * 4) - length) / 4;
-        // double numOfRotations = numOfRotationsHexShaft * 97.5;
         setLength = length;
     }
 
     private void zeroEncoder() {
-        motorEncoder.setPosition(0);
+        // motorEncoder.setPosition(0);
     }
 
     public Command startPosition() {
@@ -104,10 +119,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // motorController.setReference(setLength, ControlType.kPosition);
-        // if (motorLimitSwitch.isPressed()) {
-        //     zeroEncoder();
-        // }
+        // setSpeed(motorController.calculate(encoder.getDistance(), setLength));
+
+        SmartDashboard.putNumber("elevator encoder", encoder.getDistance());
+        SmartDashboard.putBoolean("elevator limitswitch", motorLimitSwitch.isPressed());
 
         SmartDashboard.putNumber("Elevator set-to length", setLength);
         SmartDashboard.putNumber("Elevator current length", getPosition());

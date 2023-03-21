@@ -25,11 +25,9 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
     public SwerveDriveOdometry swerveDriveOdometry;
     public AHRS navX;
-    public SwerveDrivePoseEstimator swerveDrivePoseEstimator_warp;
 
     public SwerveDrivetrainSubsystem() {
-        this.navX = new AHRS(SPI.Port.kMXP);
-        System.out.println(this.navX.getYaw());
+        navX = new AHRS(SPI.Port.kMXP);
         zeroGyro();
 
         // Creates the swerve modules, Each module is assigned an ID

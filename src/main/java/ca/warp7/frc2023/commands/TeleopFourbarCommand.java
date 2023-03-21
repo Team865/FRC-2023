@@ -23,7 +23,7 @@ public class TeleopFourbarCommand extends CommandBase {
     @Override
     public void execute() {
         double fourbarModDeadbandApplied =
-                MathUtil.applyDeadband(fourBarModifierSup.getAsDouble(), kTeleop.kStickDeadband);
+                MathUtil.applyDeadband(fourBarModifierSup.getAsDouble(), kTeleop.kFourbarStickDeadband);
 
         if (fourbarModDeadbandApplied > 0) {
             setPointModifier = 5;

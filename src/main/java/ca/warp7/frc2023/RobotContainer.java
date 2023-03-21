@@ -67,6 +67,8 @@ public class RobotContainer {
                 new TeleopElevatorCommand(elevatorSubsystem, () -> secondaryOperatorController.getRightY()));
 
         configureBindings();
+
+        configureAuto();
     }
 
     private void configureAuto() {
@@ -86,7 +88,8 @@ public class RobotContainer {
 
         secondaryOperatorController.a().onTrue(fourbarSubsystem.setPosition(0));
         secondaryOperatorController.x().onTrue(fourbarSubsystem.setPosition(25));
-        secondaryOperatorController.y().onTrue(fourbarSubsystem.setPosition(57.5));
+        secondaryOperatorController.y().onTrue(elevatorSubsystem.startPosition());
+        secondaryOperatorController.b().onTrue(elevatorSubsystem.mediumGoal());
 
         secondaryOperatorController.povDown().onTrue(intakeSubsystem.setTalonPivotSetPoint(-5));
         secondaryOperatorController.povLeft().onTrue(intakeSubsystem.setTalonPivotSetPoint(-15));
