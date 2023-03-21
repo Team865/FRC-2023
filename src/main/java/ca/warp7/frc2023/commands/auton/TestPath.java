@@ -20,19 +20,17 @@ public class TestPath implements AutoImpl {
     private final List<PathPlannerTrajectory> pathGroup;
 
     public TestPath(SwerveDrivetrainSubsystem swerveDrivetrainSubsystem) {
-        // this.swerveDrivetrainSubsystem = swerveDrivetrainSubsystem;
-        // this.intakeSubsystem = intakeSubsystem;
 
         pathGroup = PathPlanner.loadPathGroup(
                 "path",
                 // new PathConstraints(kAuton.kMaxSpeedMetersPerSecond, kAuton.kMaxAccelerationMetersPerSecondSquared));
-                new PathConstraints(1, 1));
+                new PathConstraints(2, 1.5));
 
         HashMap<String, Command> eventMap = new HashMap<>();
 
         autoBuilder = new SwerveAutoBuilder(
-                swerveDrivetrainSubsystem.swerveDrivePoseEstimator_warp::getEstimatedPosition,
-                swerveDrivetrainSubsystem::setCurrentPose,
+                swerveDrivetrainSubsystem::getPose,
+                swerveDrivetrainSubsystem::resetOdometry,
                 kDrivetrain.kSwerveDriveKinematics,
                 new PIDConstants(kAuton.translationPID.kP, kAuton.translationPID.kI, kAuton.translationPID.kD),
                 new PIDConstants(kAuton.rotationPID.kP, kAuton.rotationPID.kI, kAuton.rotationPID.kD),
@@ -47,9 +45,6 @@ public class TestPath implements AutoImpl {
     }
 
     public Command getCommand() {
-        return new SequentialCommandGroup(
-                autoBuilder.fullAuto(pathGroup)
-                // new Balance(swerve, leds))
-                );
+        return new SequentialCommandGroup(autoBuilder.fullAuto(pathGroup));
     }
 }
