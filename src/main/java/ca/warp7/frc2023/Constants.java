@@ -25,7 +25,7 @@ public class Constants {
         // This should calculate the theoretical max angular velocity using the max speed and the longer radius of the
         // robot
         public static final double kMaxAngularVelocity = kMaxSpeed / (kTrackWidth / 2);
-        public static final double kDriveGearRatio = 6.75 / 1;
+        public static final double kDriveGearRatio = 6.75;
         public static final double kSteerGearRatio = (150.0 / 7.0) / 1.0;
 
         public static final SVAConfig kDriveFeedforward = new SVAConfig(0.21964, 2.1732, 0.5249);
@@ -166,6 +166,16 @@ public class Constants {
         public static final double kTriggerDeadband = 0.05;
     }
 
+    public static final class kAuton {
+        public static final double kOuttakeSpeed = -0.8;
+        public static final double kMaxSpeedMetersPerSecond = 8;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI * 3;
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 4;
+
+        public static final PIDConstants translationPID = new PIDConstants(3, 0.05, 0);
+        public static final PIDConstants rotationPID = new PIDConstants(1, 0, 0.05);
+    }
 
     /* Controller USB Order */
     public static final class kControllers {
@@ -191,15 +201,5 @@ public class Constants {
         public static final int kFrontWheelMotorID = 11;
         public static final int kRearWheelMotorID = 18;
         public static final int kTalonPivotMotorID = 12;
-    }
-    public static final class kAuton {
-        public static final double kOuttakeSpeed = -0.8;
-        public static final double kMaxSpeedMetersPerSecond = 8;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI * 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 4;
-
-        public static final PIDConstants translationPID = new PIDConstants(3, 0.05, 0);
-        public static final PIDConstants rotationPID = new PIDConstants(1, 0, 0.05);
     }
 }
