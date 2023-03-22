@@ -152,7 +152,7 @@ public class SwerveModuleUtil {
      * Set the angle of the steer motor on the swerve module without checking if the speed is low
      * @param desiredState
      */
-    public void setAngleNoCheck(SwerveModuleState desiredState) {
+    public void setAngle(SwerveModuleState desiredState, boolean check) {
         steerMotor.set(
                 TalonFXControlMode.Position,
                 Conversions.degreesToFalcon(desiredState.angle.getDegrees(), kDrivetrain.kSteerGearRatio));
@@ -195,12 +195,12 @@ public class SwerveModuleUtil {
      * Sets the desired state for the module.
      * @param desiredState
      */
-    public void setDesiredStateNoCheck(SwerveModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean check) {
 
         // Optimize the state to avoid turning > 90 degrees.
         desiredState = ContinuousModuleStateUtil.optimize(desiredState, getState().angle);
 
-        setAngleNoCheck(desiredState);
+        setAngle(desiredState, true);
         setSpeed(desiredState, isOpenLoop);
     }
 
