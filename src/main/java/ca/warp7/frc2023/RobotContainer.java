@@ -9,7 +9,7 @@ import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
-import ca.warp7.frc2023.commands.auton.MobiltyCone;
+import ca.warp7.frc2023.commands.auton.MobilityCone;
 import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
@@ -67,7 +67,7 @@ public class RobotContainer {
     private void configureAuto() {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
         autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
-        autoChooser.addOption("Cone and mobilty", new MobiltyCone(intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption("Cone and mobility", new MobilityCone(intakeSubsystem, swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
