@@ -85,6 +85,7 @@ public class RobotContainer {
                 .leftStick()
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));
         primaryOperatorController.a().onTrue(new InstantCommand(swerveDrivetrainSubsystem::brake));
+        primaryOperatorController.b().onTrue(new InstantCommand(swerveDrivetrainSubsystem::disableBrake));
 
         secondaryOperatorController.a().onTrue(fourbarSubsystem.setPosition(0));
         secondaryOperatorController.x().onTrue(fourbarSubsystem.setPosition(25));

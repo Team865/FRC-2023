@@ -46,7 +46,7 @@ public class Constants {
         };
 
         private static final SupplyCurrentLimitConfiguration kDriveSupplyLimit =
-                new SupplyCurrentLimitConfiguration(true, 35, 60, 0.1);
+                new SupplyCurrentLimitConfiguration(true, 25, 40, 0.1);
 
         private static final TalonFXConfiguration kDriveConfig = new TalonFXConfiguration() {
             {

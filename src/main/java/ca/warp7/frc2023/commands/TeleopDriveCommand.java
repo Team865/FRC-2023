@@ -47,11 +47,17 @@ public class TeleopDriveCommand extends CommandBase {
             rotationMagnitude *= 0.5;
         }
 
-        // Drive
-        swerveDrivetrainSubsystem.drive(
-                new Translation2d(xMagnitude, yMagnitude).times(kDrivetrain.kMaxSpeed),
-                rotationMagnitude * kDrivetrain.kMaxAngularVelocity,
-                !isRobotOrientedSup.getAsBoolean(),
-                true);
+        if (!swerveDrivetrainSubsystem.getBrakeIsEnabled()) {
+            // Drive
+            swerveDrivetrainSubsystem.drive(
+                    new Translation2d(xMagnitude, yMagnitude).times(kDrivetrain.kMaxSpeed),
+                    rotationMagnitude * kDrivetrain.kMaxAngularVelocity,
+                    !isRobotOrientedSup.getAsBoolean(),
+                    true);
+
+            double last_xMagnitude = xMagnitude;
+            double last_yMagnitude = yMagnitude;
+            double last_rotationMagnitude = rotationMagnitude;
+        }
     }
 }

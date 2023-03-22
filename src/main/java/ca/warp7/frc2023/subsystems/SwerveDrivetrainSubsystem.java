@@ -22,6 +22,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
     public SwerveDriveOdometry swerveDriveOdometry;
     public AHRS navX;
+    private boolean brakeIsEnabled = false;
 
     public SwerveDrivetrainSubsystem() {
         navX = new AHRS(SPI.Port.kMXP);
@@ -145,10 +146,24 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
     public void brake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
-        swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
-        swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
-        swerveModules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
-        swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
+        swerveModules[0].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(315)), true);
+        swerveModules[1].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45)), true);
+        swerveModules[2].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45)), true);
+        swerveModules[3].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(315)), true);
+        brakeIsEnabled = true;
+    }
+
+    public void disableBrake() {
+        SwerveModuleUtil[] swerveModules = this.swerveModules;
+        swerveModules[0].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0)), true);
+        swerveModules[1].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0)), true);
+        swerveModules[2].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0)), true);
+        swerveModules[3].setDesiredStateNoCheck(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0)), true);
+        brakeIsEnabled = false;
+    }
+
+    public boolean getBrakeIsEnabled() {
+        return brakeIsEnabled;
     }
 
     public Command mobilty() {
