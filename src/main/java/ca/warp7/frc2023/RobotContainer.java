@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -77,14 +78,58 @@ public class RobotContainer {
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));
         primaryOperatorController.a().onTrue(new InstantCommand(swerveDrivetrainSubsystem::brake));
 
-        secondaryOperatorController.a().onTrue(fourbarSubsystem.setPosition(0));
-        secondaryOperatorController.x().onTrue(fourbarSubsystem.setPosition(25));
-        secondaryOperatorController.y().onTrue(elevatorSubsystem.startPosition());
-        secondaryOperatorController.b().onTrue(elevatorSubsystem.mediumGoal());
+        // Zero location
+        secondaryOperatorController
+                .a()
+                .or(secondaryOperatorController.povDown())
+                .onTrue(elevatorSubsystem
+                        .setPositionCommand(0)
+                        .andThen(new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition()))
+                        .andThen(fourbarSubsystem.setPosition(0, 0.5))
+                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)));
 
-        secondaryOperatorController.povDown().onTrue(intakeSubsystem.setTalonPivotSetPoint(-5));
-        secondaryOperatorController.povLeft().onTrue(intakeSubsystem.setTalonPivotSetPoint(-15));
-        secondaryOperatorController.povUp().onTrue(intakeSubsystem.setTalonPivotSetPoint(-25));
+        // Single substation
+        secondaryOperatorController
+                .povLeft()
+                .onTrue(fourbarSubsystem
+                        .setPosition(30, 2.5)
+                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
+                        .andThen(elevatorSubsystem.setPositionCommand(5))
+                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)));
+
+        // Double substation
+        secondaryOperatorController
+                .povUp()
+                .onTrue(fourbarSubsystem
+                        .setPosition(37, 0.5)
+                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
+                        .andThen(elevatorSubsystem.setPositionCommand(31))
+                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-17)));
+        // Ground pickup
+        secondaryOperatorController
+                .povRight()
+                .onTrue(fourbarSubsystem
+                        .setPosition(0, 0.5)
+                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
+                        .andThen(elevatorSubsystem.setPositionCommand(13))
+                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-18)));
+        // Mid goal
+        secondaryOperatorController
+                .x()
+                .onTrue(fourbarSubsystem
+                        .setPosition(57.5, 15)
+                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
+                        .andThen(elevatorSubsystem.setPositionCommand(18))
+                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-25)));
+
+        // High goal
+        secondaryOperatorController
+                .y()
+                .onTrue(fourbarSubsystem
+                        .setPosition(56, 15)
+                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
+                        .andThen(elevatorSubsystem.setPositionCommand(37))
+                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-25)));
     }
 
     public Command getAutonomousCommand() {
