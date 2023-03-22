@@ -6,12 +6,14 @@ package ca.warp7.frc2023;
 
 import ca.warp7.frc2023.Constants.kControllers;
 import ca.warp7.frc2023.commands.BalanceCommand;
+import ca.warp7.frc2023.commands.SetPointCommands;
 import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
 import ca.warp7.frc2023.commands.auton.MobilityCone;
 import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
+import ca.warp7.frc2023.commands.auton.TestAuto;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
@@ -21,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -72,6 +73,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
         autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
         autoChooser.addOption("Cone and mobility", new MobilityCone(intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
@@ -87,54 +89,32 @@ public class RobotContainer {
         secondaryOperatorController
                 .a()
                 .or(secondaryOperatorController.povDown())
-                .onTrue(elevatorSubsystem
-                        .setPositionCommand(0)
-                        .andThen(new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition()))
-                        .andThen(fourbarSubsystem.setPosition(0, 0.5))
-                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)));
+                .onTrue(SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // Single substation
         secondaryOperatorController
                 .povLeft()
-                .onTrue(fourbarSubsystem
-                        .setPosition(30, 2.5)
-                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
-                        .andThen(elevatorSubsystem.setPositionCommand(5))
-                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)));
+                .onTrue(SetPointCommands.singleSubstationSetPoint(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // Double substation
         secondaryOperatorController
                 .povUp()
-                .onTrue(fourbarSubsystem
-                        .setPosition(37, 0.5)
-                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
-                        .andThen(elevatorSubsystem.setPositionCommand(31))
-                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-17)));
+                .onTrue(SetPointCommands.doubleSubstationSetPoint(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
         // Ground pickup
         secondaryOperatorController
                 .povRight()
-                .onTrue(fourbarSubsystem
-                        .setPosition(0, 0.5)
-                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
-                        .andThen(elevatorSubsystem.setPositionCommand(13))
-                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-18)));
+                .onTrue(SetPointCommands.groundPickupSePoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
         // Mid goal
         secondaryOperatorController
                 .x()
-                .onTrue(fourbarSubsystem
-                        .setPosition(57.5, 15)
-                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
-                        .andThen(elevatorSubsystem.setPositionCommand(18))
-                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-25)));
+                .onTrue(SetPointCommands.midGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // High goal
         secondaryOperatorController
                 .y()
-                .onTrue(fourbarSubsystem
-                        .setPosition(56, 15)
-                        .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
-                        .andThen(elevatorSubsystem.setPositionCommand(37))
-                        .alongWith(intakeSubsystem.setTalonPivotSetPoint(-25)));
+                .onTrue(SetPointCommands.highGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
     }
 
     public Command getAutonomousCommand() {
