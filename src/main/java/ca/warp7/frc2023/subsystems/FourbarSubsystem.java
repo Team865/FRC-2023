@@ -19,10 +19,12 @@ public class FourbarSubsystem extends SubsystemBase {
     private SparkMaxPIDController motorController;
     private double position;
     private double setPointModifier;
+    private double atSetPointRadius;
 
     public FourbarSubsystem() {
         position = 0;
         setPointModifier = 0;
+        atSetPointRadius = 0.5;
 
         // Create right motor
         motorRight = new CANSparkMax(kFourbar.kFourbarMotorRightID, MotorType.kBrushless);
@@ -52,14 +54,19 @@ public class FourbarSubsystem extends SubsystemBase {
         return builtInEncoder.getPosition();
     }
 
+    public boolean isAtPosition() {
+        boolean atPosition = Math.abs(position - builtInEncoder.getPosition()) <= atSetPointRadius;
+        return (atPosition);
+    }
+
     // Zeroes the encoder
     public void zeroEncoder() {
         builtInEncoder.setPosition(0);
     }
 
     // Set the position of the motor
-    public Command setPosition(double setPosition) {
-        return this.runOnce(() -> position = setPosition);
+    public Command setPosition(double setPosition, double atSetPointRadius) {
+        return runOnce(() -> this.atSetPointRadius = atSetPointRadius).andThen(runOnce(() -> position = setPosition));
     }
 
     public void setPID() {
@@ -101,5 +108,6 @@ public class FourbarSubsystem extends SubsystemBase {
         motorController.setReference(position + setPointModifier, ControlType.kPosition);
         SmartDashboard.putNumber("Fourbar set-to position", position);
         SmartDashboard.putNumber("Fourbar current position", getPosition());
+        SmartDashboard.putBoolean("Fourbar is at position", isAtPosition());
     }
 }
