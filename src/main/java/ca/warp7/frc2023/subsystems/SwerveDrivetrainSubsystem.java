@@ -169,6 +169,10 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         isBrakeEnabled = false;
     }
 
+    public boolean isBrakeEnabled() {
+        return isBrakeEnabled;
+    }
+
     // TODO: No idea how this works yet lol
     // public SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
     //         Constants.kDrivetrain.kSwerveDriveKinematics,
