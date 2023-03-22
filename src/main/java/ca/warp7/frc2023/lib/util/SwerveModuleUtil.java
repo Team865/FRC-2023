@@ -158,8 +158,6 @@ public class SwerveModuleUtil {
                 Conversions.degreesToFalcon(desiredState.angle.getDegrees(), kDrivetrain.kSteerGearRatio));
     }
 
-
-
     /**
      * Set the speed of the drive motor on the swerve module
      * @param desiredState
@@ -205,7 +203,6 @@ public class SwerveModuleUtil {
         setAngleNoCheck(desiredState);
         setSpeed(desiredState, isOpenLoop);
     }
-
 
     /**
      * Configures CANCoder
