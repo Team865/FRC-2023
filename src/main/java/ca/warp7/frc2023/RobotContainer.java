@@ -49,9 +49,12 @@ public class RobotContainer {
 
         intakeSubsystem.setDefaultCommand(new TeleopIntakeCommand(
                 intakeSubsystem,
-                () -> secondaryOperatorController.rightBumper().getAsBoolean(),
-                () -> secondaryOperatorController.leftBumper().getAsBoolean(),
-                () -> secondaryOperatorController.getRightTriggerAxis()));
+                () -> secondaryOperatorController.getRightTriggerAxis(),
+                () -> secondaryOperatorController.getLeftTriggerAxis(),
+                () -> secondaryOperatorController
+                        .leftBumper()
+                        .or(secondaryOperatorController.rightBumper())
+                        .getAsBoolean()));
 
         fourbarSubsystem.setDefaultCommand(
                 new TeleopFourbarCommand(fourbarSubsystem, () -> secondaryOperatorController.getLeftY()));

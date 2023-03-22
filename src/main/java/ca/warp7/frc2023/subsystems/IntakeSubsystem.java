@@ -57,13 +57,13 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double bothWheelSpeeds) {
-        frontWheelMotor.set(bothWheelSpeeds * kIntake.kMaxIntakePercentOut);
-        rearWheelMotor.set(bothWheelSpeeds * kIntake.kMaxIntakePercentOut);
+        frontWheelMotor.set(bothWheelSpeeds);
+        rearWheelMotor.set(bothWheelSpeeds);
     }
 
     public void setIntakeSpeed(double frontWheelSpeeds, double rearWheelSpeeds) {
-        frontWheelMotor.set(frontWheelSpeeds * kIntake.kMaxIntakePercentOut);
-        rearWheelMotor.set(rearWheelSpeeds * kIntake.kMaxIntakePercentOut);
+        frontWheelMotor.set(frontWheelSpeeds);
+        rearWheelMotor.set(rearWheelSpeeds);
     }
 
     public void zeroEncoder() {
