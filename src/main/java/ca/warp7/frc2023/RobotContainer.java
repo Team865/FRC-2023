@@ -5,6 +5,7 @@
 package ca.warp7.frc2023;
 
 import ca.warp7.frc2023.Constants.kControllers;
+import ca.warp7.frc2023.commands.BalanceCommand;
 import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
@@ -80,6 +81,7 @@ public class RobotContainer {
                 .leftStick()
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));
         primaryOperatorController.a().onTrue(new InstantCommand(swerveDrivetrainSubsystem::brake));
+        primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem));
 
         // Zero location
         secondaryOperatorController

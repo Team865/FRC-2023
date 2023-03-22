@@ -115,6 +115,10 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         navX.zeroYaw();
     }
 
+    public double getPitch() {
+        return navX.getRoll();
+    }
+
     /**
      * Get yaw of the robot from navX as rotation 2d
      * Uses fused heading if navX is calibrated
