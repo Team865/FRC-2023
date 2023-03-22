@@ -138,19 +138,19 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
     public void brake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
-        swerveModules[0].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
-        swerveModules[1].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
-        swerveModules[2].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
-        swerveModules[3].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
+        swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315), true, false);
+        swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true, false);
+        swerveModules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true, false);
+        swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true, false);
         isBrakeEnabled = true;
     }
 
     public void disableBrake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
-        swerveModules[0].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true);
-        swerveModules[1].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true);
-        swerveModules[2].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true);
-        swerveModules[3].setDesiredStateNoCheck(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true);
+        swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
+        swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
+        swerveModules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
+        swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
         isBrakeEnabled = false;
     }
 
