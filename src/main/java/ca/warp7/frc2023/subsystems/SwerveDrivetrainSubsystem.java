@@ -168,6 +168,9 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         // Constantly update module positions
         swerveDriveOdometry.update(getYawRotation2d(), getSwerveModulePositions());
 
+        SmartDashboard.putNumber("Robot X", swerveDriveOdometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("Robot Y", swerveDriveOdometry.getPoseMeters().getY());
+
         SmartDashboard.putBoolean("Is Magnetometer Calibrated", navX.isMagnetometerCalibrated());
         SmartDashboard.putNumber("NavX rotation", getYawRotation2d().getDegrees());
     }
