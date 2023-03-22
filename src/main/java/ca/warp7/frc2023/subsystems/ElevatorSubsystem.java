@@ -6,9 +6,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.MotorFeedbackSensor;
-import com.revrobotics.SparkMaxLimitSwitch;
-import com.revrobotics.SparkMaxLimitSwitch.Type;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,7 +19,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private CANSparkMax rightPrimaryMotor;
     private CANSparkMax rightSecondaryMotor;
 
-    private SparkMaxLimitSwitch motorLimitSwitch;
+    private DigitalInput motorLimitSwitch;
     private PIDController motorController;
     private Encoder encoder;
     private MotorFeedbackSensor motorFeedbackSensor;
@@ -59,11 +58,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         // leftSecondaryMotor.follow(leftPrimaryMotor, true);
         // rightSecondaryMotor.follow(rightPrimaryMotor);
 
-        motorLimitSwitch = rightPrimaryMotor.getReverseLimitSwitch(Type.kNormallyClosed);
+        motorLimitSwitch = new DigitalInput(2);
 
-        motorController = new PIDController(0.5, 0, 0);
+        motorController = new PIDController(0.25, 0, 0);
+        motorController.setTolerance(1);
 
-        encoder = new Encoder(0, 1, true);
+        encoder = new Encoder(0, 1, false);
         encoder.reset();
         encoder.setDistancePerPulse(1 / (24.38 * 2 * Math.PI * 0.8755));
 
@@ -78,8 +78,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         motorController.setD(0);
     }
 
+    public boolean isAtPosition() {
+        return motorController.atSetpoint();
+    }
+
     public void setSpeed(double speed) {
-        if ((motorLimitSwitch.isPressed() && speed <= 0) || encoder.getDistance() < -0.5) {
+        if ((motorLimitSwitch.get() && speed <= 0) || encoder.getDistance() < -0.5) {
             leftPrimaryMotor.set(0);
             encoder.reset();
         } else {
@@ -105,26 +109,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         // motorEncoder.setPosition(0);
     }
 
-    public Command startPosition() {
-        return this.runOnce(() -> this.setPosition(0));
-    }
-
-    public Command mediumGoal() {
-        return this.runOnce(() -> this.setPosition(5));
-    }
-
-    public Command highGoal() {
-        return this.runOnce(() -> this.setPosition(10));
+    public Command setPositionCommand(double length) {
+        return runOnce(() -> setLength = length);
     }
 
     @Override
     public void periodic() {
-        // setSpeed(motorController.calculate(encoder.getDistance(), setLength));
+        double speed = motorController.calculate(encoder.getDistance(), setLength);
 
+        setSpeed(speed);
+
+        SmartDashboard.putNumber("elevator speed", speed);
         SmartDashboard.putNumber("elevator encoder", encoder.getDistance());
-        SmartDashboard.putBoolean("elevator limitswitch", motorLimitSwitch.isPressed());
+        SmartDashboard.putBoolean("elevator limitswitch", motorLimitSwitch.get());
 
         SmartDashboard.putNumber("Elevator set-to length", setLength);
-        SmartDashboard.putNumber("Elevator current length", getPosition());
     }
 }
