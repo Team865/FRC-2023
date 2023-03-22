@@ -153,7 +153,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
     public void brake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
-        swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315), true, false);
+        swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true, false);
         swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true, false);
         swerveModules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true, false);
         swerveModules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true, false);
