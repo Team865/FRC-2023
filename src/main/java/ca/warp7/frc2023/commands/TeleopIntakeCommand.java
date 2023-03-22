@@ -38,7 +38,7 @@ public class TeleopIntakeCommand extends CommandBase {
         if (isCubeIntakeSup.getAsBoolean()) {
             intakeSubsystem.setIntakeSpeed(frontWheelSpeed, -rearWheelSpeed);
         } else {
-            intakeSubsystem.setIntakeSpeed(bothWheelSpeed);
+            intakeSubsystem.setIntakeSpeed(bothWheelSpeed * -1);
         }
     }
 }
