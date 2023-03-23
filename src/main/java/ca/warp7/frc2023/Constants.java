@@ -166,7 +166,7 @@ public class Constants {
     }
 
     public static final class kAuton {
-        public static final double kOuttakeSpeed = -0.8;
+        public static final double kOuttakeSpeed = 0.8;
     }
 
     /* Controller USB Order */
