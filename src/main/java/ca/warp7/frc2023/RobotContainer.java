@@ -12,6 +12,7 @@ import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
 import ca.warp7.frc2023.commands.auton.MobilityCone;
+import ca.warp7.frc2023.commands.auton.MobilityConeBalance;
 import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
 import ca.warp7.frc2023.commands.auton.TestAuto;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
@@ -72,8 +73,14 @@ public class RobotContainer {
     private void configureAuto() {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
         autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
-        autoChooser.addOption("Cone and mobility", new MobilityCone(intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "Cone and mobility",
+                new MobilityCone(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "MobilityConeBalance",
+                new MobilityConeBalance(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
@@ -85,6 +92,11 @@ public class RobotContainer {
 
         // Brake
         primaryOperatorController.a().onTrue(new InstantCommand(swerveDrivetrainSubsystem::brake));
+
+        // Disable brake
+        primaryOperatorController.b().onTrue(new InstantCommand(swerveDrivetrainSubsystem::disableBrake));
+
+        // Balance
         primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem));
 
         // Disable brake
