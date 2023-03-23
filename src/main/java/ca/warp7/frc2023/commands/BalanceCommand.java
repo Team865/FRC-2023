@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class BalanceCommand extends CommandBase {
     private final SwerveDrivetrainSubsystem swerveDrivetrainSubsystem;
-    private PIDController balanceController = new PIDController(0.043, 0.0, 0, 2);
+    private PIDController balanceController =
+            new PIDController(0.043, 0.0, 0, 3); // TODO: play with period to not overshoot auto balance
 
     public BalanceCommand(SwerveDrivetrainSubsystem swerveDrivetrainSubsystem) {
         this.swerveDrivetrainSubsystem = swerveDrivetrainSubsystem;
