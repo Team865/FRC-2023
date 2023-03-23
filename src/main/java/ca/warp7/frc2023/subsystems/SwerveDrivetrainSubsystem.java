@@ -41,7 +41,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         };
 
         // Pause to allow for CANCoder to initialize. Avoids pulling bad data and not aligning
-        Timer.delay(1);
+        Timer.delay(0.5);
         resetSwerveModulesToAbsolute();
 
         swerveDriveOdometry = new SwerveDriveOdometry(
@@ -127,8 +127,13 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         navX.zeroYaw();
     }
 
+    /**
+     * Uses roll from the navX since it is mounted at 90 degrees
+     *
+     * @return the pitch of the robot
+     */
     public double getPitch() {
-        return navX.getRoll();
+        return navX.getRoll(); // Uses role since navX is 90 deg.
     }
 
     /**
