@@ -156,7 +156,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         }
     }
 
-    public void brake() {
+    private void enableBrake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
         swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true, false);
         swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true, false);
@@ -165,7 +165,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         isBrakeEnabled = true;
     }
 
-    public void disableBrake() {
+    private void disableBrake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
         swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
         swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
@@ -186,6 +186,10 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     //         new Pose2d(),
     //         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
     //         VecBuilder.fill(0.5, 0.5, Units.degr333333333333333333333333333333333333eesToRadians(30)));
+
+    public Command brakeCommand() {
+        return startEnd(() -> enableBrake(), () -> disableBrake());
+    }
 
     public Command mobilty() {
         return run(() -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
@@ -227,6 +231,8 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
         // Constantly update module positions
         swerveDriveOdometry.update(getYawRotation2d(), getSwerveModulePositions());
+
+        SmartDashboard.putBoolean("Swerve drive brake", isBrakeEnabled);
 
         SmartDashboard.putNumber("Robot X", swerveDriveOdometry.getPoseMeters().getX());
         SmartDashboard.putNumber("Robot Y", swerveDriveOdometry.getPoseMeters().getY());

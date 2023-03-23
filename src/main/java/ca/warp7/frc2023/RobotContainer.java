@@ -90,17 +90,11 @@ public class RobotContainer {
                 .leftStick()
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));
 
-        // Brake
-        primaryOperatorController.a().onTrue(new InstantCommand(swerveDrivetrainSubsystem::brake));
-
-        // Disable brake
-        primaryOperatorController.b().onTrue(new InstantCommand(swerveDrivetrainSubsystem::disableBrake));
+        // Toggle brake
+        primaryOperatorController.b().toggleOnTrue(swerveDrivetrainSubsystem.brakeCommand());
 
         // Balance
         primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem));
-
-        // Disable brake
-        primaryOperatorController.b().onTrue(new InstantCommand(swerveDrivetrainSubsystem::disableBrake));
 
         // Cone stow set point
         secondaryOperatorController
