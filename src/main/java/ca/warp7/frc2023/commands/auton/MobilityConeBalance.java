@@ -28,7 +28,7 @@ public class MobilityConeBalance extends SequentialCommandGroup {
                 SetPointCommands.highGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem),
                 new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition()),
                 intakeSubsystem.setIntakeSpeedCommand(0.8).withTimeout(1),
-                SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem),
+                SetPointCommands.coneStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem),
                 intakeSubsystem.setIntakeSpeedCommand(0.0),
                 swerveDrivetrainSubsystem.followTrajectoryCommand(examplePath, true),
                 new BalanceCommand(swerveDrivetrainSubsystem));

@@ -26,7 +26,7 @@ public class MobilityCone extends SequentialCommandGroup {
                 new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition())
                         .alongWith(intakeSubsystem.setIntakeSpeedCommand(-0.3)),
                 intakeSubsystem.setIntakeSpeedCommand(0.8).withTimeout(1),
-                SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem),
+                SetPointCommands.coneStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem),
                 swerveDrivetrainSubsystem.followTrajectoryCommand(examplePath, true));
     }
 }
