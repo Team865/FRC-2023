@@ -9,7 +9,16 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class SetPointCommands {
 
-    public static Command stowSetPoint(
+    public static Command coneStowSetPoint(
+            ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
+        return new SequentialCommandGroup(elevatorSubsystem
+                .setPositionCommand(0)
+                .andThen(new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition()))
+                .andThen(fourbarSubsystem.setPosition(0, 0.5))
+                .alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)));
+    }
+
+    public static Command cubeStowSetPoint(
             ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
         return new SequentialCommandGroup(elevatorSubsystem
                 .setPositionCommand(0)

@@ -102,41 +102,52 @@ public class RobotContainer {
         // Disable brake
         primaryOperatorController.b().onTrue(new InstantCommand(swerveDrivetrainSubsystem::disableBrake));
 
-        // Zero location
+        // Cone stow set point
+        secondaryOperatorController
+                .x()
+                .and(secondaryOperatorController.povDown())
+                .onTrue(SetPointCommands.coneStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+        // Cube stow set point
+        secondaryOperatorController
+                .x()
+                .and(secondaryOperatorController.povRight())
+                .onTrue(SetPointCommands.cubeStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+
+        // Single substation cone set point
         secondaryOperatorController
                 .a()
-                .onTrue(SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
-
-        // Single substation cone
-        secondaryOperatorController
-                .povDown()
+                .and(secondaryOperatorController.povLeft())
                 .onTrue(SetPointCommands.singleSubstationConeSetPoint(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
-        // Single substation cube
+        // Single substation cube set point
         secondaryOperatorController
-                .povLeft()
+                .a()
+                .and(secondaryOperatorController.povUp())
                 .onTrue(SetPointCommands.singleSubstationCubeSetPoint(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
-
-        // Double substation
-        secondaryOperatorController
-                .povUp()
-                .onTrue(SetPointCommands.doubleSubstationSetPoint(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
         // Ground pickup
         secondaryOperatorController
-                .povRight()
+                .a()
+                .and(secondaryOperatorController.povRight())
                 .onTrue(SetPointCommands.groundPickupSePoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
         // Mid goal
         secondaryOperatorController
-                .x()
+                .b()
+                .and(secondaryOperatorController.povLeft())
                 .onTrue(SetPointCommands.midGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // High goal
         secondaryOperatorController
-                .y()
+                .b()
+                .and(secondaryOperatorController.povUp())
                 .onTrue(SetPointCommands.highGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+        // Double substation
+        secondaryOperatorController
+                .y()
+                .and(secondaryOperatorController.povUp())
+                .onTrue(SetPointCommands.doubleSubstationSetPoint(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
     }
 
     public Command getAutonomousCommand() {
