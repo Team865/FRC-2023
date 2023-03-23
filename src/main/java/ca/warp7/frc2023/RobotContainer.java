@@ -88,13 +88,18 @@ public class RobotContainer {
         // Zero location
         secondaryOperatorController
                 .a()
-                .or(secondaryOperatorController.povDown())
                 .onTrue(SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
-        // Single substation
+        // Single substation cone
+        secondaryOperatorController
+                .povDown()
+                .onTrue(SetPointCommands.singleSubstationConeSetPoint(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+
+        // Single substation cube
         secondaryOperatorController
                 .povLeft()
-                .onTrue(SetPointCommands.singleSubstationSetPoint(
+                .onTrue(SetPointCommands.singleSubstationCubeSetPoint(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // Double substation
