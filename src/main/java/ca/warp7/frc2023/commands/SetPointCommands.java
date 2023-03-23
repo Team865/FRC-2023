@@ -56,10 +56,10 @@ public class SetPointCommands {
 
     public static Command groundPickupSePoint(
             ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
-        return new SequentialCommandGroup(fourbarSubsystem
-                .setPosition(0, 0.5)
+        return new SequentialCommandGroup(elevatorSubsystem
+                .setPositionCommand(13)
                 .andThen(new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()))
-                .andThen(elevatorSubsystem.setPositionCommand(13))
+                .andThen(fourbarSubsystem.setPosition(0, 0.5))
                 .alongWith(intakeSubsystem.setTalonPivotSetPoint(-18)));
     }
 
