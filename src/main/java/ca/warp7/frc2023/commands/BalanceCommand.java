@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class BalanceCommand extends CommandBase {
     private final SwerveDrivetrainSubsystem swerveDrivetrainSubsystem;
-    private PIDController balanceController =
-            new PIDController(0.043, 0.0, 0, 3); // TODO: play with period to not overshoot auto balance
+    private PIDController balanceController = new PIDController(0.033, 0.0, 0.0);
+    private boolean isFieldOriented = true;
 
-    public BalanceCommand(SwerveDrivetrainSubsystem swerveDrivetrainSubsystem) {
+    public BalanceCommand(SwerveDrivetrainSubsystem swerveDrivetrainSubsystem, boolean isFieldOriented) {
         this.swerveDrivetrainSubsystem = swerveDrivetrainSubsystem;
         this.addRequirements(swerveDrivetrainSubsystem);
+        this.isFieldOriented = isFieldOriented;
     }
 
     @Override
@@ -23,7 +24,7 @@ public class BalanceCommand extends CommandBase {
         SmartDashboard.putNumber("Pitch", swerveDrivetrainSubsystem.getPitch());
         power = this.balanceController.calculate(this.swerveDrivetrainSubsystem.getPitch(), 0);
         SmartDashboard.putNumber("Power", power);
-        this.swerveDrivetrainSubsystem.drive(new Translation2d(power, 0), 0.0, true, true);
+        this.swerveDrivetrainSubsystem.drive(new Translation2d(power, 0), 0.0, isFieldOriented, true);
     }
 
     public boolean isBalanced() {

@@ -46,6 +46,8 @@ public class FourbarSubsystem extends SubsystemBase {
         builtInEncoder = motorLeft.getEncoder();
         motorController = motorLeft.getPIDController();
 
+        zeroEncoder();
+
         setPID();
     }
 
@@ -100,6 +102,10 @@ public class FourbarSubsystem extends SubsystemBase {
         motorRight.setIdleMode(IdleMode.kBrake);
         motorRight.enableVoltageCompensation(12);
         motorRight.setSmartCurrentLimit(60);
+    }
+
+    public Command zeroEncoderCommand() {
+        return runOnce((this::zeroEncoder));
     }
 
     @Override

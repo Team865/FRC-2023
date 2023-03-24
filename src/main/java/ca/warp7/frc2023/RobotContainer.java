@@ -13,12 +13,15 @@ import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
 import ca.warp7.frc2023.commands.auton.MobilityCone;
 import ca.warp7.frc2023.commands.auton.MobilityConeBalance;
+import ca.warp7.frc2023.commands.auton.MobilityConeBalanceRed;
+import ca.warp7.frc2023.commands.auton.MobilityConeBalanceRed2;
 import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
 import ca.warp7.frc2023.commands.auton.TestAuto;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
 import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -53,7 +56,7 @@ public class RobotContainer {
         intakeSubsystem.setDefaultCommand(new TeleopIntakeCommand(
                 intakeSubsystem,
                 () -> secondaryOperatorController.getRightTriggerAxis(),
-                () -> secondaryOperatorController.getLeftTriggerAxis(),
+                () -> MathUtil.clamp(secondaryOperatorController.getLeftTriggerAxis(), 0, 0.8),
                 () -> secondaryOperatorController
                         .leftBumper()
                         .or(secondaryOperatorController.rightBumper())
@@ -81,43 +84,55 @@ public class RobotContainer {
                 "MobilityConeBalance",
                 new MobilityConeBalance(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "MobilityConeBalanceRed",
+                new MobilityConeBalanceRed(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "MobilityConeBalanceRed2",
+                new MobilityConeBalanceRed2(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
     private void configureBindings() {
-        primaryOperatorController.back().onTrue(new InstantCommand(swerveDrivetrainSubsystem::zeroGyro));
+        /*
+         * Driver
+         */
+        primaryOperatorController.back().onTrue(swerveDrivetrainSubsystem.zeroCommand());
         primaryOperatorController
-                .leftStick()
+                .start()
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));
-
         // Toggle brake
         primaryOperatorController.b().toggleOnTrue(swerveDrivetrainSubsystem.brakeCommand());
-
         // Balance
-        primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem));
+        primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem, true));
 
+        /*
+         * Operator
+         */
         // Cone stow set point
         secondaryOperatorController
-                .x()
+                .a()
                 .and(secondaryOperatorController.povDown())
                 .onTrue(SetPointCommands.coneStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
         // Cube stow set point
         secondaryOperatorController
-                .x()
+                .a()
                 .and(secondaryOperatorController.povRight())
                 .onTrue(SetPointCommands.cubeStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // Single substation cone set point
         secondaryOperatorController
-                .a()
-                .and(secondaryOperatorController.povLeft())
+                .x()
+                .and(secondaryOperatorController.povDown())
                 .onTrue(SetPointCommands.singleSubstationConeSetPoint(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // Single substation cube set point
         secondaryOperatorController
-                .a()
-                .and(secondaryOperatorController.povUp())
+                .x()
+                .and(secondaryOperatorController.povLeft())
                 .onTrue(SetPointCommands.singleSubstationCubeSetPoint(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
         // Ground pickup
@@ -142,6 +157,9 @@ public class RobotContainer {
                 .and(secondaryOperatorController.povUp())
                 .onTrue(SetPointCommands.doubleSubstationSetPoint(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+
+        secondaryOperatorController.back().onTrue(fourbarSubsystem.zeroEncoderCommand());
+        secondaryOperatorController.start().onTrue(intakeSubsystem.zeroEncoderCommand());
     }
 
     public Command getAutonomousCommand() {

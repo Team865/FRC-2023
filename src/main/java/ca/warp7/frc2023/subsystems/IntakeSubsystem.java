@@ -44,6 +44,7 @@ public class IntakeSubsystem extends SubsystemBase {
         talonPivotEncoder = talonPivotMotor.getEncoder();
         talonPivotMotorController = talonPivotMotor.getPIDController();
 
+        zeroEncoder();
         configController();
     }
 
@@ -72,6 +73,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public double getPosition() {
         return talonPivotEncoder.getPosition();
+    }
+
+    public Command zeroEncoderCommand() {
+        return runOnce(this::zeroEncoder);
     }
 
     public Command setIntakeSpeedCommand(double bothWheelSpeeds) {

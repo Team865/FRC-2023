@@ -187,6 +187,10 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     //         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
     //         VecBuilder.fill(0.5, 0.5, Units.degr333333333333333333333333333333333333eesToRadians(30)));
 
+    public Command zeroCommand() {
+        return runOnce(() -> this.zeroGyro());
+    }
+
     public Command brakeCommand() {
         return startEnd(() -> enableBrake(), () -> disableBrake());
     }
@@ -218,7 +222,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
                                 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only
                         // use feedforwards.
                         this::setModuleStates, // Module states consumer
-                        true, // Should the path be automatically mirrored depending on alliance color. Optional,
+                        false, // Should the path be automatically mirrored depending on alliance color. Optional,
                         // defaults to true
                         this // Requires this drive subsystem
                         ));

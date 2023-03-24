@@ -78,7 +78,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         motorController.setD(0);
     }
 
-    public boolean isAtPosition() {
+    public boolean isAtPosition(double setPointRadius) {
+        motorController.setTolerance(setPointRadius);
         return motorController.atSetpoint();
     }
 
