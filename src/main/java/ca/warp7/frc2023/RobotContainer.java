@@ -11,6 +11,7 @@ import ca.warp7.frc2023.commands.TeleopDriveCommand;
 import ca.warp7.frc2023.commands.TeleopElevatorCommand;
 import ca.warp7.frc2023.commands.TeleopFourbarCommand;
 import ca.warp7.frc2023.commands.TeleopIntakeCommand;
+import ca.warp7.frc2023.commands.auton.HighBalance;
 import ca.warp7.frc2023.commands.auton.MobilityCone;
 import ca.warp7.frc2023.commands.auton.MobilityConeBalance;
 import ca.warp7.frc2023.commands.auton.MobilityConeBalanceRed;
@@ -92,6 +93,9 @@ public class RobotContainer {
                 "MobilityConeBalanceRed2",
                 new MobilityConeBalanceRed2(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "HighBalance",
+                new HighBalance(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
@@ -119,7 +123,7 @@ public class RobotContainer {
         // Cube stow set point
         secondaryOperatorController
                 .a()
-                .and(secondaryOperatorController.povRight())
+                .and(secondaryOperatorController.povLeft())
                 .onTrue(SetPointCommands.cubeStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
 
         // Single substation cone set point
