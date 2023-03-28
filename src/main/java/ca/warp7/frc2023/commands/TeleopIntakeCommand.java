@@ -30,11 +30,11 @@ public class TeleopIntakeCommand extends CommandBase {
     public void execute() {
         if (cubeIntakeSupplier.getAsDouble() > coneIntakeSupplier.getAsDouble()) {
             intakeSpeed = cubeIntakeSupplier.getAsDouble();
-            intakeSpeed *= outtakeSupplier.getAsBoolean() ? -1 : 1;
+            intakeSpeed *= outtakeSupplier.getAsBoolean() ? -0.25 : 0.8;
             intakeSubsystem.setIntakeSpeed(intakeSpeed, -intakeSpeed);
         } else {
             intakeSpeed = coneIntakeSupplier.getAsDouble();
-            intakeSpeed *= outtakeSupplier.getAsBoolean() ? -1 : 1;
+            intakeSpeed *= outtakeSupplier.getAsBoolean() ? -0.25 : 0.8;
             intakeSubsystem.setIntakeSpeed(-intakeSpeed);
         }
     }
