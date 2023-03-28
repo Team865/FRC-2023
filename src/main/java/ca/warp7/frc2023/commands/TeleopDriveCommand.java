@@ -2,6 +2,7 @@ package ca.warp7.frc2023.commands;
 
 import ca.warp7.frc2023.Constants.kDrivetrain;
 import ca.warp7.frc2023.Constants.kTeleop;
+import ca.warp7.frc2023.lib.math.SensitivityGainAdjustment;
 import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -37,9 +38,12 @@ public class TeleopDriveCommand extends CommandBase {
     public void execute() {
 
         // Get values and apply deadband
-        double xMagnitude = MathUtil.applyDeadband(translationSup.getAsDouble(), kTeleop.kStickDeadband);
-        double yMagnitude = MathUtil.applyDeadband(strafeSup.getAsDouble(), kTeleop.kStickDeadband);
-        double rotationMagnitude = MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kStickDeadband);
+        double xMagnitude = SensitivityGainAdjustment.driveGainAdjustment(
+                MathUtil.applyDeadband(translationSup.getAsDouble(), kTeleop.kDriveDeadband));
+        double yMagnitude = SensitivityGainAdjustment.driveGainAdjustment(
+                MathUtil.applyDeadband(strafeSup.getAsDouble(), kTeleop.kDriveDeadband));
+        double rotationMagnitude = MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kRotateDeadband);
+
         // Remove brake if high throttle
         if ((xMagnitude > 0.9 || yMagnitude > 0.9 || rotationMagnitude > 0.9)
                 && swerveDrivetrainSubsystem.isBrakeEnabled) {

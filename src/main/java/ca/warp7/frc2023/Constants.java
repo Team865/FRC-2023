@@ -159,7 +159,8 @@ public class Constants {
     }
 
     public static final class kTeleop {
-        public static final double kStickDeadband = 0.05;
+        public static final double kDriveDeadband = 0.05;
+        public static final double kRotateDeadband = 0.1;
         public static final double kElevatorStickDeadband = 0.10;
         public static final double kFourbarStickDeadband = 0.25;
         public static final double kTriggerDeadband = 0.05;
