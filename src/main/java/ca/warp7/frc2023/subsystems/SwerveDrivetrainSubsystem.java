@@ -41,7 +41,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         };
 
         // Pause to allow for CANCoder to initialize. Avoids pulling bad data and not aligning
-        Timer.delay(0.5);
+        Timer.delay(1);
         resetSwerveModulesToAbsolute();
 
         swerveDriveOdometry = new SwerveDriveOdometry(
@@ -195,7 +195,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         return startEnd(() -> enableBrake(), () -> disableBrake());
     }
 
-    public Command mobilty() {
+    public Command mobility() {
         return run(() -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
     }
 
