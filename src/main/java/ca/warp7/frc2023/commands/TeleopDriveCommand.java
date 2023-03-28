@@ -40,6 +40,11 @@ public class TeleopDriveCommand extends CommandBase {
         double xMagnitude = MathUtil.applyDeadband(translationSup.getAsDouble(), kTeleop.kStickDeadband);
         double yMagnitude = MathUtil.applyDeadband(strafeSup.getAsDouble(), kTeleop.kStickDeadband);
         double rotationMagnitude = MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kStickDeadband);
+        // Remove brake if high throttle
+        if ((xMagnitude > 0.9 || yMagnitude > 0.9 || rotationMagnitude > 0.9)
+                && swerveDrivetrainSubsystem.isBrakeEnabled) {
+            swerveDrivetrainSubsystem.isBrakeEnabled = false;
+        }
 
         if (isSlowModeSup.getAsBoolean()) {
             xMagnitude *= 0.5;
