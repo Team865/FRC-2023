@@ -21,10 +21,10 @@ public class BalanceCommand extends CommandBase {
     @Override
     public void execute() {
         double power = 0;
-        SmartDashboard.putNumber("Pitch", swerveDrivetrainSubsystem.getPitch());
-        power = this.balanceController.calculate(this.swerveDrivetrainSubsystem.getPitch(), 0);
+        SmartDashboard.putNumber("Pitch", Math.abs(swerveDrivetrainSubsystem.getPitch()));
+        power = this.balanceController.calculate(swerveDrivetrainSubsystem.getPitch(), 0);
         SmartDashboard.putNumber("Power", power);
-        this.swerveDrivetrainSubsystem.drive(new Translation2d(power, 0), 0.0, isFieldOriented, true);
+        this.swerveDrivetrainSubsystem.drive(new Translation2d(power, 0), 0.0, false, true);
     }
 
     public boolean isBalanced() {
