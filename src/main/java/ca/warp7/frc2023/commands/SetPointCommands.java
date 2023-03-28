@@ -12,7 +12,7 @@ public class SetPointCommands {
     public static Command coneStowSetPoint(
             ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
         return Commands.sequence(
-                elevatorSubsystem.setPositionCommand(0).alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)),
+                elevatorSubsystem.setPositionCommand(0).alongWith(intakeSubsystem.setTalonPivotSetPoint(-2.5)),
                 new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition(0.5)),
                 fourbarSubsystem.setPosition(0, 0.5));
     }
@@ -20,8 +20,8 @@ public class SetPointCommands {
     public static Command cubeStowSetPoint(
             ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
         return Commands.sequence(
-                elevatorSubsystem.setPositionCommand(0).alongWith(intakeSubsystem.setTalonPivotSetPoint(-5)),
-                fourbarSubsystem.setPosition(12, 0.5));
+                elevatorSubsystem.setPositionCommand(0).alongWith(intakeSubsystem.setTalonPivotSetPoint(-2.5)),
+                fourbarSubsystem.setPosition(20, 0.5));
     }
 
     public static Command singleSubstationConeSetPoint(
@@ -44,9 +44,9 @@ public class SetPointCommands {
     public static Command doubleSubstationSetPoint(
             ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
         return Commands.sequence(
-                fourbarSubsystem.setPosition(37, 0.5),
+                fourbarSubsystem.setPosition(38, 0.5),
                 new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()),
-                elevatorSubsystem.setPositionCommand(31).alongWith(intakeSubsystem.setTalonPivotSetPoint(-17)));
+                elevatorSubsystem.setPositionCommand(24).alongWith(intakeSubsystem.setTalonPivotSetPoint(-15)));
     }
 
     public static Command groundPickupSePoint(
@@ -68,8 +68,8 @@ public class SetPointCommands {
     public static Command highGoalSetPoint(
             ElevatorSubsystem elevatorSubsystem, FourbarSubsystem fourbarSubsystem, IntakeSubsystem intakeSubsystem) {
         return Commands.sequence(
-                fourbarSubsystem.setPosition(57, 10).alongWith(intakeSubsystem.setTalonPivotSetPoint(-27)),
+                fourbarSubsystem.setPosition(57, 10).alongWith(intakeSubsystem.setTalonPivotSetPoint(-22)),
                 new WaitUntilCommand(() -> fourbarSubsystem.isAtPosition()),
-                elevatorSubsystem.setPositionCommand(40));
+                elevatorSubsystem.setPositionCommand(36.5));
     }
 }
