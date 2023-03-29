@@ -5,7 +5,9 @@ import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,8 +16,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,12 +30,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
     public SwerveDriveOdometry swerveDriveOdometry;
+    public SwerveDrivePoseEstimator swerveDrivePoseEstimator;
+    public Field2d field2d;
+    public double[] botpose;
     public AHRS navX;
     public boolean isBrakeEnabled = false;
 
     public SwerveDrivetrainSubsystem() {
         navX = new AHRS(SPI.Port.kMXP);
         zeroGyro();
+        botpose = NetworkTableInstance.getDefault()
+                .getTable("limelight")
+                .getEntry("botpose")
+                .getDoubleArray(new double[7]);
+
+        field2d = new Field2d();
 
         // Creates the swerve modules, Each module is assigned an ID
         swerveModules = new SwerveModuleUtil[] {
@@ -46,6 +60,13 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
         swerveDriveOdometry = new SwerveDriveOdometry(
                 Constants.kDrivetrain.kSwerveDriveKinematics, getYawRotation2d(), getSwerveModulePositions());
+        swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
+                Constants.kDrivetrain.kSwerveDriveKinematics,
+                getYawRotation2d(),
+                getSwerveModulePositions(),
+                new Pose2d(),
+                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(2)),
+                VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10)));
     }
 
     /**
@@ -143,8 +164,8 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      * @return Rotation2d of yaw
      */
     public Rotation2d getYawRotation2d() {
-        // Don't use fused heading even if available for. Fix later TODO
-        return false ? Rotation2d.fromDegrees(navX.getFusedHeading()) : Rotation2d.fromDegrees(360 - navX.getYaw());
+        double deg = navX.getYaw();
+        return Rotation2d.fromDegrees(360 - (deg < 0 ? deg += 360 : deg));
     }
 
     /**
@@ -177,15 +198,6 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public boolean isBrakeEnabled() {
         return isBrakeEnabled;
     }
-
-    // TODO: No idea how this works yet lol
-    // public SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
-    //         Constants.kDrivetrain.kSwerveDriveKinematics,
-    //         getYawRotation2d(),
-    //         getSwerveModulePositions(),
-    //         new Pose2d(),
-    //         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-    //         VecBuilder.fill(0.5, 0.5, Units.degr333333333333333333333333333333333333eesToRadians(30)));
 
     public Command zeroCommand() {
         return runOnce(() -> this.zeroGyro());
@@ -234,9 +246,14 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Constantly update module positions
-        swerveDriveOdometry.update(getYawRotation2d(), getSwerveModulePositions());
+        swerveDrivePoseEstimator.update(getYawRotation2d(), getSwerveModulePositions());
+
+        field2d.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
+
+        SmartDashboard.putData("field", field2d);
 
         SmartDashboard.putBoolean("Swerve drive brake", isBrakeEnabled);
+        SmartDashboard.putNumberArray("botpose", botpose);
 
         SmartDashboard.putNumber("Robot X", swerveDriveOdometry.getPoseMeters().getX());
         SmartDashboard.putNumber("Robot Y", swerveDriveOdometry.getPoseMeters().getY());
