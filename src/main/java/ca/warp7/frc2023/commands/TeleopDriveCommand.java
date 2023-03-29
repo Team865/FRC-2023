@@ -14,7 +14,7 @@ public class TeleopDriveCommand extends CommandBase {
     private SwerveDrivetrainSubsystem swerveDrivetrainSubsystem;
 
     private DoubleSupplier translationSup, strafeSup, rotationSup;
-    private BooleanSupplier isRobotOrientedSup, isSlowModeSup;
+    private BooleanSupplier isRobotOrientedSup, isSlowModeSup, moveLeft, moveRight;
 
     public TeleopDriveCommand(
             SwerveDrivetrainSubsystem swerveDrivetrainSubsystem,
@@ -22,7 +22,9 @@ public class TeleopDriveCommand extends CommandBase {
             DoubleSupplier strafeSup,
             DoubleSupplier rotationSup,
             BooleanSupplier isRobotOrientedSup,
-            BooleanSupplier isSlowModeSup) {
+            BooleanSupplier isSlowModeSup,
+            BooleanSupplier moveLeft,
+            BooleanSupplier moveRight) {
 
         this.swerveDrivetrainSubsystem = swerveDrivetrainSubsystem;
         addRequirements(swerveDrivetrainSubsystem);
@@ -32,6 +34,8 @@ public class TeleopDriveCommand extends CommandBase {
         this.rotationSup = rotationSup;
         this.isRobotOrientedSup = isRobotOrientedSup;
         this.isSlowModeSup = isSlowModeSup;
+        this.moveLeft = moveLeft;
+        this.moveRight = moveRight;
     }
 
     @Override
@@ -54,6 +58,12 @@ public class TeleopDriveCommand extends CommandBase {
             xMagnitude *= 0.5;
             yMagnitude *= 0.5;
             rotationMagnitude *= 0.5;
+        }
+
+        if (moveLeft.getAsBoolean()) {
+            yMagnitude = 0.1;
+        } else if (moveRight.getAsBoolean()) {
+            yMagnitude = -0.1;
         }
 
         if (!swerveDrivetrainSubsystem.isBrakeEnabled) {
