@@ -121,16 +121,6 @@ spotless {
         trimTrailingWhitespace()
         endWithNewline()
     }
-    format 'xml', {
-        target fileTree('.') {
-            include '**/*.xml'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        eclipseWtp('xml')
-        trimTrailingWhitespace()
-        indentWithSpaces(4)
-        endWithNewline()
-    }
     format 'misc', {
         target fileTree('.') {
             include '**/*.md', '**/.gitignore'
