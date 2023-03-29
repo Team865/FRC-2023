@@ -105,7 +105,7 @@ public class RobotContainer {
         /*
          * Driver
          */
-        primaryOperatorController.back().onTrue(swerveDrivetrainSubsystem.zeroCommand());
+        primaryOperatorController.back().onTrue(swerveDrivetrainSubsystem.zeroGyroCommand());
         primaryOperatorController
                 .start()
                 .onTrue(new InstantCommand(swerveDrivetrainSubsystem::resetSwerveModulesToAbsolute));

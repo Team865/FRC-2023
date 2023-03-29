@@ -199,12 +199,12 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         return isBrakeEnabled;
     }
 
-    public Command zeroCommand() {
-        return runOnce(() -> this.zeroGyro());
+    public Command zeroGyroCommand() {
+        return runOnce(this::zeroGyro);
     }
 
     public Command brakeCommand() {
-        return startEnd(() -> enableBrake(), () -> disableBrake());
+        return startEnd(this::enableBrake, this::disableBrake);
     }
 
     public Command mobility() {
