@@ -18,7 +18,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -35,16 +34,10 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public Field2d field2d;
     public double[] botpose;
     public AHRS navX;
-    public boolean isBrakeEnabled = false;
+    private boolean isBrakeEnabled = false;
 
     public SwerveDrivetrainSubsystem() {
         navX = new AHRS(SPI.Port.kMXP);
-        zeroGyro();
-        botpose = NetworkTableInstance.getDefault()
-                .getTable("limelight")
-                .getEntry("botpose")
-                .getDoubleArray(new double[7]);
-
         field2d = new Field2d();
 
         // Creates the swerve modules, Each module is assigned an ID
@@ -130,7 +123,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the positions of positions of swerve modules
+     * Gets the positions of swerve modules
      *
      * @return the positions of swerve modules in an array
      */
@@ -187,7 +180,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
         isBrakeEnabled = true;
     }
 
-    private void disableBrake() {
+    public void disableBrake() {
         SwerveModuleUtil[] swerveModules = this.swerveModules;
         swerveModules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
         swerveModules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true, false);
@@ -258,10 +251,14 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
         field2d.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
 
+        SmartDashboard.putNumber("Megatag X", LimelightHelpers.getBotPose2d("").getX());
+        SmartDashboard.putNumber("Megatag Y", LimelightHelpers.getBotPose2d("").getY());
+        SmartDashboard.putNumber(
+                "Megatag Rot", LimelightHelpers.getBotPose2d("").getRotation().getDegrees());
+
         SmartDashboard.putData("field", field2d);
 
         SmartDashboard.putBoolean("Swerve drive brake", isBrakeEnabled);
-        SmartDashboard.putNumberArray("botpose", botpose);
 
         SmartDashboard.putNumber("Robot X", swerveDriveOdometry.getPoseMeters().getX());
         SmartDashboard.putNumber("Robot Y", swerveDriveOdometry.getPoseMeters().getY());
