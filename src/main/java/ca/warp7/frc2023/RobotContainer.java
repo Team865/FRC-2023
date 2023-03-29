@@ -53,8 +53,7 @@ public class RobotContainer {
                 () -> -primaryOperatorController.getRightX(),
                 () -> primaryOperatorController.leftBumper().getAsBoolean(),
                 () -> primaryOperatorController.rightBumper().getAsBoolean(),
-                () -> primaryOperatorController.povLeft().getAsBoolean(),
-                () -> primaryOperatorController.povRight().getAsBoolean()));
+                () -> primaryOperatorController.getHID().getPOV()));
 
         intakeSubsystem.setDefaultCommand(new TeleopIntakeCommand(
                 intakeSubsystem,
@@ -72,7 +71,6 @@ public class RobotContainer {
                 new TeleopElevatorCommand(elevatorSubsystem, () -> -secondaryOperatorController.getRightY()));
 
         configureBindings();
-
         configureAuto();
     }
 
