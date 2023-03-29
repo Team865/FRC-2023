@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
+    public static final double kBatteryNominalVoltage = 12.0;
 
     /* Drivetrain Information */
     public static final class kDrivetrain {
@@ -163,6 +164,7 @@ public class Constants {
         public static final double kRotateDeadband = 0.1;
         public static final double kElevatorStickDeadband = 0.10;
         public static final double kFourbarStickDeadband = 0.25;
+        public static final double kDriveSingleDirectionPercent = 0.2;
         public static final double kTriggerDeadband = 0.05;
     }
 
