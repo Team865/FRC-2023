@@ -40,6 +40,8 @@ public class FourbarSubsystem extends SubsystemBase {
 
         motorRight.setSmartCurrentLimit(40);
         motorLeft.setSmartCurrentLimit(40);
+        motorLeft.enableVoltageCompensation(12);
+        motorRight.enableVoltageCompensation(12);
 
         motorRight.follow(motorLeft, true);
 
@@ -111,6 +113,10 @@ public class FourbarSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // System.out.println(position);
+
+        SmartDashboard.putNumber("Fourbar left output", motorLeft.getAppliedOutput());
+        SmartDashboard.putNumber("Fourbar right output", motorRight.getAppliedOutput());
+
         motorController.setReference(position + setPointModifier, ControlType.kPosition);
         SmartDashboard.putNumber("Fourbar set-to position", position);
         SmartDashboard.putNumber("Fourbar current position", getPosition());
