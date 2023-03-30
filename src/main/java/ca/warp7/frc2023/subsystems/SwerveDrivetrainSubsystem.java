@@ -1,7 +1,6 @@
 package ca.warp7.frc2023.subsystems;
 
 import ca.warp7.frc2023.Constants;
-import ca.warp7.frc2023.lib.util.LimelightHelpers;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -241,20 +240,22 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
         // Constantly update module positions
         swerveDrivePoseEstimator.update(getYawRotation2d(), getSwerveModulePositions());
-        if (LimelightHelpers.getTX("") != 0 || LimelightHelpers.getTY("") != 0) {
-            swerveDrivePoseEstimator.addVisionMeasurement(
-                    LimelightHelpers.getBotPose2d(""),
-                    Timer.getFPGATimestamp()
-                            - (LimelightHelpers.getLatency_Pipeline("") / 1000.0)
-                            - (LimelightHelpers.getLatency_Capture("") / 1000.0));
-        }
+        //        if (LimelightHelpers.getTX("") != 0 || LimelightHelpers.getTY("") != 0) {
+        //            swerveDrivePoseEstimator.addVisionMeasurement(
+        //                    LimelightHelpers.getBotPose2d(""),
+        //                    Timer.getFPGATimestamp()
+        //                            - (LimelightHelpers.getLatency_Pipeline("") / 1000.0)
+        //                            - (LimelightHelpers.getLatency_Capture("") / 1000.0));
+        //        }
 
         field2d.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
 
-        SmartDashboard.putNumber("Megatag X", LimelightHelpers.getBotPose2d("").getX());
-        SmartDashboard.putNumber("Megatag Y", LimelightHelpers.getBotPose2d("").getY());
-        SmartDashboard.putNumber(
-                "Megatag Rot", LimelightHelpers.getBotPose2d("").getRotation().getDegrees());
+        //        SmartDashboard.putNumber("Megatag X", LimelightHelpers.getBotPose2d("").getX());
+        //        SmartDashboard.putNumber("Megatag Y", LimelightHelpers.getBotPose2d("").getY());
+        //        SmartDashboard.putNumber(
+        //                "Megatag Rot", LimelightHelpers.getBotPose2d("").getRotation().getDegrees());
+        //        SmartDashboard.putNumber("Limelight X", LimelightHelpers.getTX(""));
+        //        SmartDashboard.putNumber("Limelight Y", LimelightHelpers.getTY(""));
 
         SmartDashboard.putData("field", field2d);
 
