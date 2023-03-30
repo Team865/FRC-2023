@@ -8,6 +8,7 @@ import ca.warp7.frc2023.lib.math.SensitivityGainAdjustment;
 import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -76,7 +77,12 @@ public class TeleopDriveCommand extends CommandBase {
             rotationMagnitude *= 0.5;
         }
 
-        if (xMagnitude > 0.9 || yMagnitude > 0.9 || rotationMagnitude > 0.9) swerveDrivetrainSubsystem.disableBrake();
+        SmartDashboard.putNumber("x mag", xMagnitude);
+        SmartDashboard.putNumber("y mag", yMagnitude);
+        SmartDashboard.putNumber("rot mag", rotationMagnitude);
+        if (swerveDrivetrainSubsystem.isBrakeEnabled()
+                & (Math.abs(xMagnitude) > 0.9 || Math.abs(yMagnitude) > 0.9 || Math.abs(rotationMagnitude) > 0.9))
+            swerveDrivetrainSubsystem.disableBrake();
 
         if (!swerveDrivetrainSubsystem.isBrakeEnabled()) {
             swerveDrivetrainSubsystem.drive(
