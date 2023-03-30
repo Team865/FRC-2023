@@ -4,6 +4,7 @@ import static ca.warp7.frc2023.Constants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -22,7 +23,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     private DigitalInput limitSwitch;
     private PIDController profiledPIDController;
     private Encoder encoder;
-    double setLength;
+
+    private boolean safetyTriggered;
+    private double setPosition;
 
     public ElevatorSubsystem() {
         leftPrimaryMotor = new CANSparkMax(kElevator.kLeftPrimaryMotorID, MotorType.kBrushed);
@@ -30,9 +33,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightPrimaryMotor = new CANSparkMax(kElevator.kRightPrimaryMotorID, MotorType.kBrushed);
         rightSecondaryMotor = new CANSparkMax(kElevator.kRightSecondaryMotorID, MotorType.kBrushed);
 
-        leftSecondaryMotor.follow(leftPrimaryMotor);
-        rightPrimaryMotor.follow(leftPrimaryMotor);
-        rightSecondaryMotor.follow(leftPrimaryMotor);
+        //        comment out and check
+        //        leftSecondaryMotor.follow(leftPrimaryMotor);
+        //        rightPrimaryMotor.follow(leftPrimaryMotor);
+        //        rightSecondaryMotor.follow(leftPrimaryMotor);
+
+        leftPrimaryMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
+        leftSecondaryMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
+        rightPrimaryMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
+        rightSecondaryMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
 
         configMotor(leftPrimaryMotor);
         configMotor(leftSecondaryMotor);
@@ -53,6 +62,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         sparkMax.setIdleMode(IdleMode.kBrake);
         sparkMax.setSmartCurrentLimit(20);
         sparkMax.enableVoltageCompensation(kBatteryNominalVoltage);
+        sparkMax.setCANTimeout(0);
+        sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 500);
+        sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 500);
+        sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus3, 500);
+        sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus4, 500);
+        sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus5, 500);
+        sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus6, 500);
         sparkMax.burnFlash();
     }
 
@@ -68,40 +84,62 @@ public class ElevatorSubsystem extends SubsystemBase {
         return profiledPIDController.atSetpoint();
     }
 
-    public void setSpeed(double speed) {
-        if ((limitSwitch.get() && speed <= 0) || encoder.getDistance() < -0.5) {
-            leftPrimaryMotor.set(0);
-            encoder.reset();
-        } else {
-            leftPrimaryMotor.set(speed);
-        }
-    }
-
+    /**
+     * @return the position the elevator is at (in inches)
+     */
     private double getPosition() {
         return encoder.getDistance();
     }
 
-    private void setPosition(double length) {
-        setLength = length;
-    }
-
+    /**
+     * Zeroes the encoder on the elevator
+     */
     private void zeroEncoder() {
-        // motorEncoder.setPosition(0);
+        encoder.reset();
     }
 
-    public Command setPositionCommand(double length) {
-        return runOnce(() -> setLength = length);
+    /**
+     * @param position the position to set the elevator to (in inches)
+     * @return runOnce command
+     */
+    public Command setPositionCommand(double position) {
+        return runOnce(() -> setPosition = position);
+    }
+
+    /**
+     * Will not run the motor if: hitting limit switch, thinks it's below the lowest, or thinks it's above the highest
+     * @param speed percent to run the elevator motors at
+     */
+    public void setSpeed(double speed) {
+        if ((limitSwitch.get() && speed <= 0) || getPosition() < -0.5) {
+            leftPrimaryMotor.set(0);
+            leftSecondaryMotor.set(0);
+            rightPrimaryMotor.set(0);
+            rightSecondaryMotor.set(0);
+            safetyTriggered = true;
+            zeroEncoder();
+        } else {
+            safetyTriggered = false;
+            leftPrimaryMotor.set(speed);
+            leftSecondaryMotor.set(speed);
+            rightPrimaryMotor.set(speed);
+            rightSecondaryMotor.set(speed);
+        }
     }
 
     @Override
     public void periodic() {
-        double outputPercent = MathUtil.clamp(profiledPIDController.calculate(encoder.getDistance(), setLength), 0, 1);
+        double outputPercent = MathUtil.clamp(profiledPIDController.calculate(getPosition(), setPosition), -1, 1);
         setSpeed(outputPercent);
+        SmartDashboard.putNumber("leftPrimaryMotor applied", leftPrimaryMotor.getAppliedOutput());
+        SmartDashboard.putNumber("leftSecondaryMotor applied", leftSecondaryMotor.getAppliedOutput());
+        SmartDashboard.putNumber("rightPrimaryMotor applied", rightPrimaryMotor.getAppliedOutput());
+        SmartDashboard.putNumber("rightSecondaryMotor applied", rightSecondaryMotor.getAppliedOutput());
 
-        SmartDashboard.putNumber("Elevator Output Percent (%)", outputPercent);
+        SmartDashboard.putNumber("Elevator Percent Output (%)", outputPercent);
         SmartDashboard.putNumber("Elevator Position (m)", getPosition());
-        SmartDashboard.putBoolean("elevator limit switch", limitSwitch.get());
-
-        SmartDashboard.putNumber("Elevator set-to length", setLength);
+        SmartDashboard.putBoolean("Elevator Limit Switch Activated", limitSwitch.get());
+        SmartDashboard.putBoolean("Elevator Safety Triggered", safetyTriggered);
+        SmartDashboard.putNumber("Elevator Set-to Length", setPosition);
     }
 }
