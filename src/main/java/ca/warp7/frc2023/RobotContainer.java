@@ -5,7 +5,13 @@
 package ca.warp7.frc2023;
 
 import ca.warp7.frc2023.Constants.kControllers;
-import ca.warp7.frc2023.commands.*;
+import ca.warp7.frc2023.commands.BalanceCommand;
+import ca.warp7.frc2023.commands.SetPointCommands;
+import ca.warp7.frc2023.commands.TeleopDriveCommand;
+import ca.warp7.frc2023.commands.TeleopElevatorCommand;
+import ca.warp7.frc2023.commands.TeleopFourbarCommand;
+import ca.warp7.frc2023.commands.TeleopIntakeCommand;
+import ca.warp7.frc2023.commands.auton.*;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
@@ -75,6 +81,10 @@ public class RobotContainer {
                 new MobilityConeBalance(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         autoChooser.addOption("TestGroups", new TestPathGroups(swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "1.5",
+                new Mobility1andHalfConeBalance(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
