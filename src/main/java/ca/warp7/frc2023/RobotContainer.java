@@ -65,28 +65,16 @@ public class RobotContainer {
 
     private void configureAuto() {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
-        //        autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
-        //        autoChooser.addOption(
-        //                "Cone and mobility",
-        //                new MobilityCone(elevatorSubsystem, fourbarSubsystem, intakeSubsystem,
-        // swerveDrivetrainSubsystem));
-        //        autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
-        //        autoChooser.addOption(
-        //                "MobilityConeBalance",
-        //                new MobilityConeBalance(
-        //                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        //        autoChooser.addOption(
-        //                "MobilityConeBalanceRed",
-        //                new MobilityConeBalanceRed(
-        //                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        //        autoChooser.addOption(
-        //                "MobilityConeBalanceRed2",
-        //                new MobilityConeBalanceRed2(
-        //                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        //        autoChooser.addOption(
-        //                "HighBalance",
-        //                new HighBalance(elevatorSubsystem, fourbarSubsystem, intakeSubsystem,
-        // swerveDrivetrainSubsystem));
+        autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
+        autoChooser.addOption(
+                "Cone and mobility",
+                new MobilityCone(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "MobilityConeBalance",
+                new MobilityConeBalance(
+                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption("TestGroups", new TestPathGroups(swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
