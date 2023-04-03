@@ -80,9 +80,6 @@ public class TeleopDriveCommand extends CommandBase {
         SmartDashboard.putNumber("x mag", xMagnitude);
         SmartDashboard.putNumber("y mag", yMagnitude);
         SmartDashboard.putNumber("rot mag", rotationMagnitude);
-        if (swerveDrivetrainSubsystem.isBrakeEnabled()
-                & (Math.abs(xMagnitude) > 0.9 || Math.abs(yMagnitude) > 0.9 || Math.abs(rotationMagnitude) > 0.9))
-            swerveDrivetrainSubsystem.disableBrake();
 
         if (!swerveDrivetrainSubsystem.isBrakeEnabled()) {
             swerveDrivetrainSubsystem.drive(
