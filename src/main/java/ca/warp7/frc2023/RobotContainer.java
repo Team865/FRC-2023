@@ -5,19 +5,7 @@
 package ca.warp7.frc2023;
 
 import ca.warp7.frc2023.Constants.kControllers;
-import ca.warp7.frc2023.commands.BalanceCommand;
-import ca.warp7.frc2023.commands.SetPointCommands;
-import ca.warp7.frc2023.commands.TeleopDriveCommand;
-import ca.warp7.frc2023.commands.TeleopElevatorCommand;
-import ca.warp7.frc2023.commands.TeleopFourbarCommand;
-import ca.warp7.frc2023.commands.TeleopIntakeCommand;
-import ca.warp7.frc2023.commands.auton.HighBalance;
-import ca.warp7.frc2023.commands.auton.MobilityCone;
-import ca.warp7.frc2023.commands.auton.MobilityConeBalance;
-import ca.warp7.frc2023.commands.auton.MobilityConeBalanceRed;
-import ca.warp7.frc2023.commands.auton.MobilityConeBalanceRed2;
-import ca.warp7.frc2023.commands.auton.SimpleConeAuto;
-import ca.warp7.frc2023.commands.auton.TestAuto;
+import ca.warp7.frc2023.commands.*;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
@@ -27,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -76,26 +65,28 @@ public class RobotContainer {
 
     private void configureAuto() {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
-        autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
-        autoChooser.addOption(
-                "Cone and mobility",
-                new MobilityCone(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
-        autoChooser.addOption(
-                "MobilityConeBalance",
-                new MobilityConeBalance(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        autoChooser.addOption(
-                "MobilityConeBalanceRed",
-                new MobilityConeBalanceRed(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        autoChooser.addOption(
-                "MobilityConeBalanceRed2",
-                new MobilityConeBalanceRed2(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        autoChooser.addOption(
-                "HighBalance",
-                new HighBalance(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        //        autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
+        //        autoChooser.addOption(
+        //                "Cone and mobility",
+        //                new MobilityCone(elevatorSubsystem, fourbarSubsystem, intakeSubsystem,
+        // swerveDrivetrainSubsystem));
+        //        autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
+        //        autoChooser.addOption(
+        //                "MobilityConeBalance",
+        //                new MobilityConeBalance(
+        //                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        //        autoChooser.addOption(
+        //                "MobilityConeBalanceRed",
+        //                new MobilityConeBalanceRed(
+        //                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        //        autoChooser.addOption(
+        //                "MobilityConeBalanceRed2",
+        //                new MobilityConeBalanceRed2(
+        //                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        //        autoChooser.addOption(
+        //                "HighBalance",
+        //                new HighBalance(elevatorSubsystem, fourbarSubsystem, intakeSubsystem,
+        // swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
@@ -119,51 +110,58 @@ public class RobotContainer {
         secondaryOperatorController
                 .a()
                 .and(secondaryOperatorController.povDown())
-                .onTrue(SetPointCommands.coneStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(new ConditionalCommand(
+                        SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.4, 0),
+                        SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0),
+                        () -> elevatorSubsystem.currentGoal == Constants.Goals.HIGH_GOAL
+                                || elevatorSubsystem.currentGoal == Constants.Goals.MID_GOAL));
         // Cube stow set point
         secondaryOperatorController
                 .a()
                 .and(secondaryOperatorController.povLeft())
-                .onTrue(SetPointCommands.cubeStowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(new ConditionalCommand(
+                        SetGoalCommands.cubeStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.4, 0),
+                        SetGoalCommands.cubeStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0.75),
+                        () -> elevatorSubsystem.currentGoal == Constants.Goals.HIGH_GOAL
+                                || elevatorSubsystem.currentGoal == Constants.Goals.MID_GOAL));
 
         // Single substation cone set point
         secondaryOperatorController
                 .x()
                 .and(secondaryOperatorController.povDown())
-                .onTrue(SetPointCommands.singleSubstationConeSetPoint(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(SetGoalCommands.singleSubstationCone(fourbarSubsystem, elevatorSubsystem, intakeSubsystem));
 
         // Single substation cube set point
         secondaryOperatorController
                 .x()
                 .and(secondaryOperatorController.povLeft())
-                .onTrue(SetPointCommands.singleSubstationCubeSetPoint(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(SetGoalCommands.singleSubstationCube(fourbarSubsystem, elevatorSubsystem, intakeSubsystem));
+
         // Ground pickup
         secondaryOperatorController
                 .a()
                 .and(secondaryOperatorController.povRight())
-                .onTrue(SetPointCommands.groundPickupSePoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(new ConditionalCommand(
+                        SetGoalCommands.groundPickup(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0.5),
+                        SetGoalCommands.groundPickup(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0),
+                        () -> elevatorSubsystem.currentGoal == Constants.Goals.CUBE_STOW));
         // Mid goal
         secondaryOperatorController
                 .b()
                 .and(secondaryOperatorController.povLeft())
-                .onTrue(SetPointCommands.midGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(SetGoalCommands.midGoal(fourbarSubsystem, elevatorSubsystem, intakeSubsystem));
 
         // High goal
         secondaryOperatorController
                 .b()
                 .and(secondaryOperatorController.povUp())
-                .onTrue(SetPointCommands.highGoalSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
+                .onTrue(SetGoalCommands.highGoal(fourbarSubsystem, elevatorSubsystem, intakeSubsystem));
+
         // Double substation
         secondaryOperatorController
                 .y()
                 .and(secondaryOperatorController.povUp())
-                .onTrue(SetPointCommands.doubleSubstationSetPoint(
-                        elevatorSubsystem, fourbarSubsystem, intakeSubsystem));
-
-        secondaryOperatorController.back().onTrue(fourbarSubsystem.zeroEncoderCommand());
-        secondaryOperatorController.start().onTrue(intakeSubsystem.zeroEncoderCommand());
+                .onTrue(SetGoalCommands.doubleSubStation(fourbarSubsystem, elevatorSubsystem, intakeSubsystem));
     }
 
     public Command getAutonomousCommand() {

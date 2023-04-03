@@ -33,6 +33,6 @@ public class TeleopFourbarCommand extends CommandBase {
             setPointModifier = 0;
         }
 
-        fourbarSubsystem.setSetPointModifier(setPointModifier);
+        // fourbarSubsystem.setSetPointModifier(setPointModifier);
     }
 }

@@ -6,10 +6,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopIntakeCommand extends CommandBase {
-    private IntakeSubsystem intakeSubsystem;
+    private final IntakeSubsystem intakeSubsystem;
 
-    private DoubleSupplier coneIntakeSupplier, cubeIntakeSupplier;
-    private BooleanSupplier outtakeSupplier;
+    private final DoubleSupplier coneIntakeSupplier, cubeIntakeSupplier;
+    private final BooleanSupplier outtakeSupplier;
     private double intakeSpeed;
 
     public TeleopIntakeCommand(
@@ -30,11 +30,19 @@ public class TeleopIntakeCommand extends CommandBase {
     public void execute() {
         if (cubeIntakeSupplier.getAsDouble() > coneIntakeSupplier.getAsDouble()) {
             intakeSpeed = cubeIntakeSupplier.getAsDouble();
-            intakeSpeed *= outtakeSupplier.getAsBoolean() ? -0.25 : 0.8;
+            if (outtakeSupplier.getAsBoolean()) {
+                intakeSpeed = -0.5;
+            } else {
+                intakeSpeed *= 0.8;
+            }
             intakeSubsystem.setIntakeSpeed(intakeSpeed, -intakeSpeed);
         } else {
             intakeSpeed = coneIntakeSupplier.getAsDouble();
-            intakeSpeed *= outtakeSupplier.getAsBoolean() ? -0.25 : 0.8;
+            if (outtakeSupplier.getAsBoolean()) {
+                intakeSpeed = -0.5;
+            } else {
+                intakeSpeed *= 0.8;
+            }
             intakeSubsystem.setIntakeSpeed(-intakeSpeed);
         }
     }

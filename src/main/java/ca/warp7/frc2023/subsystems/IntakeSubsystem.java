@@ -26,6 +26,10 @@ public class IntakeSubsystem extends SubsystemBase {
         rearWheelMotor = new CANSparkMax(kIntake.kRearWheelMotorID, MotorType.kBrushless);
         talonPivotMotor = new CANSparkMax(kIntake.kTalonPivotMotorID, MotorType.kBrushless);
 
+        frontWheelMotor.setCANTimeout(0);
+        rearWheelMotor.setCANTimeout(0);
+        talonPivotMotor.setCANTimeout(0);
+
         frontWheelMotor.restoreFactoryDefaults();
         rearWheelMotor.restoreFactoryDefaults();
         talonPivotMotor.restoreFactoryDefaults();
