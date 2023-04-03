@@ -1,5 +1,6 @@
 package ca.warp7.frc2023;
 
+import ca.warp7.frc2023.lib.config.ProfiledPIDConfig;
 import ca.warp7.frc2023.lib.config.SVAConfig;
 import ca.warp7.frc2023.lib.config.SwerveModuleConfig;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -14,6 +15,18 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static final double kBatteryNominalVoltage = 12.0;
+
+    public enum Goals {
+        NONE,
+        CONE_STOW,
+        CUBE_STOW,
+        MID_GOAL,
+        HIGH_GOAL,
+        GROUND_PICKUP,
+        SINGLE_SUBSTATION_CONE,
+        SINGLE_SUBSTATION_CUBE,
+        DOUBLE_SUBSTATION
+    }
 
     /* Drivetrain Information */
     public static final class kDrivetrain {
@@ -185,10 +198,19 @@ public class Constants {
     }
 
     public static final class kElevator {
-        public static final int kLeftPrimaryMotorID = 16;
-        public static final int kLeftSecondaryMotorID = 17;
-        public static final int kRightPrimaryMotorID = 14;
-        public static final int kRightSecondaryMotorID = 15;
+        public static final int kLeftPrimaryMotorID = 0;
+        public static final int kLeftSecondaryMotorID = 1;
+        public static final int kRightPrimaryMotorID = 2;
+        public static final int kRightSecondaryMotorID = 3;
+
+        public static final int kLimitSwitchID = 2;
+
+        public static final int[] kEncoderIDs = {0, 1};
+        public static final boolean kEncoderReversed = false;
+
+        public static final double kEncoderDistancePerPulse = 1 / (24.38 * 2 * Math.PI * 0.8755);
+
+        public static final ProfiledPIDConfig kProfiledPIDController = new ProfiledPIDConfig(1.8, 0, 0, 90, 250, 0.1);
     }
 
     public static final class kIntake {
