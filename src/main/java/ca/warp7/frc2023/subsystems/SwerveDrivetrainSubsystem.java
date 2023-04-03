@@ -1,6 +1,7 @@
 package ca.warp7.frc2023.subsystems;
 
 import ca.warp7.frc2023.Constants;
+import ca.warp7.frc2023.lib.util.LimelightHelpers;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -28,10 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleUtil[] swerveModules;
-    public SwerveDriveOdometry swerveDriveOdometry;
     public SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     public Field2d field2d;
-    public double[] botpose;
     public AHRS navX;
     private boolean isBrakeEnabled = false;
 
@@ -47,19 +46,18 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
             new SwerveModuleUtil(Constants.kDrivetrain.kModule3.kConfig)
         };
 
-        // Pause to allow for CANCoder to initialize. Avoids pulling bad data and not aligning
-        Timer.delay(1);
-        resetSwerveModulesToAbsolute();
-
-        swerveDriveOdometry = new SwerveDriveOdometry(
-                Constants.kDrivetrain.kSwerveDriveKinematics, getYawRotation2d(), getSwerveModulePositions());
         swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
                 Constants.kDrivetrain.kSwerveDriveKinematics,
                 getYawRotation2d(),
                 getSwerveModulePositions(),
                 new Pose2d(),
-                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(2)),
-                VecBuilder.fill(2, 2, Units.degreesToRadians(30)));
+                VecBuilder.fill(0.025, 0.025, Units.degreesToRadians(1.5)),
+                VecBuilder.fill(1, 1, Units.degreesToRadians(60)));
+
+        // Pause to allow for CANCoder to initialize. Avoids p
+        // lling bad data and not aligning
+        Timer.delay(1);
+        resetSwerveModulesToAbsolute();
     }
 
     /**
@@ -90,7 +88,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      * @return Pose2d of the robot
      */
     public Pose2d getPose() {
-        return swerveDriveOdometry.getPoseMeters();
+        return swerveDrivePoseEstimator.getEstimatedPosition();
     }
 
     /**
@@ -99,7 +97,7 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
      * @param pose
      */
     public void resetOdometry(Pose2d pose) {
-        swerveDriveOdometry.resetPosition(getYawRotation2d(), getSwerveModulePositions(), pose);
+        swerveDrivePoseEstimator.resetPosition(getYawRotation2d(), getSwerveModulePositions(), pose);
     }
 
     /**
@@ -240,31 +238,18 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
         // Constantly update module positions
         swerveDrivePoseEstimator.update(getYawRotation2d(), getSwerveModulePositions());
-        //        if (LimelightHelpers.getTX("") != 0 || LimelightHelpers.getTY("") != 0) {
-        //            swerveDrivePoseEstimator.addVisionMeasurement(
-        //                    LimelightHelpers.getBotPose2d(""),
-        //                    Timer.getFPGATimestamp()
-        //                            - (LimelightHelpers.getLatency_Pipeline("") / 1000.0)
-        //                            - (LimelightHelpers.getLatency_Capture("") / 1000.0));
-        //        }
+        if (LimelightHelpers.getTV("")) {
+            swerveDrivePoseEstimator.addVisionMeasurement(
+                    LimelightHelpers.getBotPose2d_wpiBlue(""),
+                    Timer.getFPGATimestamp()
+                            - (LimelightHelpers.getLatency_Capture("") / 1000)
+                            - (LimelightHelpers.getLatency_Pipeline("") / 1000));
+        }
 
         field2d.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
 
-        //        SmartDashboard.putNumber("Megatag X", LimelightHelpers.getBotPose2d("").getX());
-        //        SmartDashboard.putNumber("Megatag Y", LimelightHelpers.getBotPose2d("").getY());
-        //        SmartDashboard.putNumber(
-        //                "Megatag Rot", LimelightHelpers.getBotPose2d("").getRotation().getDegrees());
-        //        SmartDashboard.putNumber("Limelight X", LimelightHelpers.getTX(""));
-        //        SmartDashboard.putNumber("Limelight Y", LimelightHelpers.getTY(""));
-
         SmartDashboard.putData("field", field2d);
-
         SmartDashboard.putBoolean("Swerve drive brake", isBrakeEnabled);
-
-        SmartDashboard.putNumber("Robot X", swerveDriveOdometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("Robot Y", swerveDriveOdometry.getPoseMeters().getY());
-
-        SmartDashboard.putBoolean("Is Magnetometer Calibrated", navX.isMagnetometerCalibrated());
         SmartDashboard.putNumber("NavX rotation", getYawRotation2d().getDegrees());
     }
 }
