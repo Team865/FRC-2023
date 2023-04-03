@@ -4,9 +4,6 @@ import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
 import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class MobilityCone extends SequentialCommandGroup {

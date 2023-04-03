@@ -5,12 +5,7 @@
 package ca.warp7.frc2023;
 
 import ca.warp7.frc2023.Constants.kControllers;
-import ca.warp7.frc2023.commands.BalanceCommand;
-import ca.warp7.frc2023.commands.SetPointCommands;
-import ca.warp7.frc2023.commands.TeleopDriveCommand;
-import ca.warp7.frc2023.commands.TeleopElevatorCommand;
-import ca.warp7.frc2023.commands.TeleopFourbarCommand;
-import ca.warp7.frc2023.commands.TeleopIntakeCommand;
+import ca.warp7.frc2023.commands.*;
 import ca.warp7.frc2023.commands.auton.*;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
@@ -71,11 +66,9 @@ public class RobotContainer {
 
     private void configureAuto() {
         autoChooser.setDefaultOption("NO AUTO!", Commands.print("No auto selected"));
-        autoChooser.addOption("Simple cone auto", new SimpleConeAuto(intakeSubsystem));
         autoChooser.addOption(
                 "Cone and mobility",
                 new MobilityCone(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
-        autoChooser.addOption("Daniel's Test", new TestAuto(swerveDrivetrainSubsystem));
         autoChooser.addOption(
                 "MobilityConeBalance",
                 new MobilityConeBalance(
