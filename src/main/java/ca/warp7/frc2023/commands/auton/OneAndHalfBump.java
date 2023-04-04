@@ -25,9 +25,9 @@ public class OneAndHalfBump extends SequentialCommandGroup {
         List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(
                 "1.5Bump",
                 new PathConstraints(2, 2),
-                new PathConstraints(0.5, 0.5),
-                new PathConstraints(0.5, 0.5),
-                new PathConstraints(0.5, 0.25),
+                new PathConstraints(1, 0.5),
+                new PathConstraints(1, 0.5),
+                new PathConstraints(1, 0.5),
                 new PathConstraints(2, 2),
                 new PathConstraints(0.5, 0.5));
 
@@ -37,12 +37,12 @@ public class OneAndHalfBump extends SequentialCommandGroup {
                 Commands.sequence(
                         intakeSubsystem.setIntakeSpeedCommand(-0.3),
                         SetGoalCommands.highGoal(fourbarSubsystem, elevatorSubsystem, intakeSubsystem),
-                        new WaitCommand(1.25),
+                        new WaitCommand(2),
                         intakeSubsystem.setIntakeSpeedCommand(0.5),
                         new WaitCommand(0.2),
                         intakeSubsystem.setIntakeSpeedCommand(0.0),
-                        SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.5, 0),
-                        new WaitCommand(1)));
+                        SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.75, 0),
+                        new WaitCommand(2)));
 
         eventMap.put(
                 "GroundPickup",
