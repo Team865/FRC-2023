@@ -1,7 +1,6 @@
 package ca.warp7.frc2023.subsystems;
 
 import ca.warp7.frc2023.Constants;
-import ca.warp7.frc2023.lib.util.LimelightHelpers;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -237,13 +236,13 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
         // Constantly update module positions
         swerveDrivePoseEstimator.update(getYawRotation2d(), getSwerveModulePositions());
-        if (LimelightHelpers.getTV("")) {
-            swerveDrivePoseEstimator.addVisionMeasurement(
-                    LimelightHelpers.getBotPose2d_wpiBlue(""),
-                    Timer.getFPGATimestamp()
-                            - (LimelightHelpers.getLatency_Capture("") / 1000)
-                            - (LimelightHelpers.getLatency_Pipeline("") / 1000));
-        }
+        //        if (LimelightHelpers.getTV("")) {
+        //            swerveDrivePoseEstimator.addVisionMeasurement(
+        //                    LimelightHelpers.getBotPose2d_wpiBlue(""),
+        //                    Timer.getFPGATimestamp()
+        //                            - (LimelightHelpers.getLatency_Capture("") / 1000)
+        //                            - (LimelightHelpers.getLatency_Pipeline("") / 1000));
+        //        }
 
         field2d.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
 
