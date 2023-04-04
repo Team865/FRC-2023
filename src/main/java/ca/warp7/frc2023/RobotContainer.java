@@ -78,6 +78,17 @@ public class RobotContainer {
                 "1.5",
                 new Mobility1andHalfConeBalance(
                         elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "HighBalance",
+                new HighBalance(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "1.5Bump",
+                new OneAndHalfBump(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "2High", new TwoHigh(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+        autoChooser.addOption(
+                "TestAuto",
+                new TestAuto(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         SmartDashboard.putData("autoChooser", autoChooser);
     }
 
