@@ -1,6 +1,8 @@
 package ca.warp7.frc2023.commands.auton;
 
 import ca.warp7.frc2023.Constants;
+import ca.warp7.frc2023.commands.BalanceCommand;
+import ca.warp7.frc2023.commands.SetGoalCommands;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
 import ca.warp7.frc2023.subsystems.FourbarSubsystem;
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
@@ -24,25 +26,23 @@ public class Mobility1andHalfConeBalance extends SequentialCommandGroup {
         List<PathPlannerTrajectory> examplePath = PathPlanner.loadPathGroup(
                 "1.5", new PathConstraints(2, 0.5), new PathConstraints(1.5, 1), new PathConstraints(6.75, 3));
 
-        HashMap eventMap = new HashMap<String, Command>();
-        //        eventMap.put(
-        //                "Cone0",
-        //                Commands.sequence(
-        //                        intakeSubsystem.setIntakeSpeedCommand(-0.3),
-        //                        SetPointCommands.highGoalSetPoint(elevatorSubsystem, fourbarSubsystem,
-        // intakeSubsystem),
-        //                        new WaitUntilCommand(() -> elevatorSubsystem.isAtPosition()),
-        //                        intakeSubsystem.setIntakeSpeedCommand(0.8).withTimeout(1),
-        //                        SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem, intakeSubsystem),
-        //                        intakeSubsystem.setIntakeSpeedCommand(0.0)));
-        //        eventMap.put(
-        //                "Cone1",
-        //                Commands.sequence(
-        //                        intakeSubsystem.setIntakeSpeedCommand(-0.3).withTimeout(2),
-        //                        SetPointCommands.groundPickupSePoint(elevatorSubsystem, fourbarSubsystem,
-        // intakeSubsystem)));
-        //        eventMap.put("Stow", SetPointCommands.stowSetPoint(elevatorSubsystem, fourbarSubsystem,
-        // intakeSubsystem));
+        HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put(
+                "0ScoreHigh",
+                Commands.sequence(
+                        intakeSubsystem.setIntakeSpeedCommand(-0.3),
+                        SetGoalCommands.highGoal(fourbarSubsystem, elevatorSubsystem, intakeSubsystem),
+                        intakeSubsystem.setIntakeSpeedCommand(0.5).withTimeout(1),
+                        SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.4, 0),
+                        intakeSubsystem.setIntakeSpeedCommand(0.0)));
+        eventMap.put(
+                "1GroundIntakeCone",
+                Commands.sequence(
+                        intakeSubsystem.setIntakeSpeedCommand(-0.8).withTimeout(0.5),
+                        intakeSubsystem.setIntakeSpeedCommand(-0.3),
+                        SetGoalCommands.groundPickup(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0)));
+        eventMap.put("2Stow", SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0));
+        eventMap.put("3AutoBalance", new BalanceCommand(swerveDrivetrainSubsystem, false).withTimeout(3));
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
                 swerveDrivetrainSubsystem::getPose,
