@@ -9,6 +9,7 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
+import com.pathplanner.lib.auto.PIDConstants;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -69,8 +70,6 @@ public class Constants {
                 slot0.kF = 0;
                 supplyCurrLimit = kDriveSupplyLimit;
                 voltageCompSaturation = 12.0;
-                // openloopRamp = 0;
-                // closedloopRamp = 0;
             }
         };
 
@@ -174,7 +173,7 @@ public class Constants {
 
     public static final class kTeleop {
         public static final double kDriveDeadband = 0.05;
-        public static final double kRotateDeadband = 0.1;
+        public static final double kRotateDeadband = 0.75;
         public static final double kElevatorStickDeadband = 0.10;
         public static final double kFourbarStickDeadband = 0.25;
         public static final double kDriveSingleDirectionPercent = 0.2;
@@ -182,7 +181,8 @@ public class Constants {
     }
 
     public static final class kAuton {
-        public static final double kOuttakeSpeed = 0.8;
+        public static final PIDConstants kTranslationalController = new PIDConstants(0.5, 0, 0);
+        public static final PIDConstants kRotationalController = new PIDConstants(4, 0, 0);
     }
 
     /* Controller USB Order */
@@ -193,15 +193,14 @@ public class Constants {
     }
 
     public static final class kFourbar {
-        public static final int kFourbarMotorLeftID = 13;
-        public static final int kFourbarMotorRightID = 10;
+        public static final int kMotorLeftID = 13;
+        public static final int kMotorRightID = 10;
+
+        public static final double kConeCubeStowFromScoreWait = 0.4;
     }
 
     public static final class kElevator {
-        public static final int kLeftPrimaryMotorID = 0;
-        public static final int kLeftSecondaryMotorID = 1;
-        public static final int kRightPrimaryMotorID = 2;
-        public static final int kRightSecondaryMotorID = 3;
+        public static final int kMotorGroupID = 9;
 
         public static final int kLimitSwitchID = 2;
 
@@ -211,10 +210,14 @@ public class Constants {
         public static final double kEncoderDistancePerPulse = 1 / (24.38 * 2 * Math.PI * 0.8755);
 
         public static final ProfiledPIDConfig kProfiledPIDController = new ProfiledPIDConfig(1.8, 0, 0, 90, 250, 0.1);
+
+        public static final double kCubeStowFromGround = 0.75;
+        public static final double kGroundFromCubeStow = 0.5;
     }
 
     public static final class kIntake {
-        public static final double kMaxIntakePercentOut = 0.8;
+        public static final double kOuttakeSpeed = 0.5;
+        public static final double kFeedforwardSpeed = -0.3;
         public static final int kFrontWheelMotorID = 11;
         public static final int kRearWheelMotorID = 18;
         public static final int kTalonPivotMotorID = 12;

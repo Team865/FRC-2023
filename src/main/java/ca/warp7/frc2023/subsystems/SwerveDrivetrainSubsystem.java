@@ -3,10 +3,7 @@ package ca.warp7.frc2023.subsystems;
 import ca.warp7.frc2023.Constants;
 import ca.warp7.frc2023.lib.util.SwerveModuleUtil;
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,8 +18,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrivetrainSubsystem extends SubsystemBase {
@@ -49,11 +44,10 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
                 getYawRotation2d(),
                 getSwerveModulePositions(),
                 new Pose2d(),
-                VecBuilder.fill(0.025, 0.025, Units.degreesToRadians(1.5)),
-                VecBuilder.fill(1, 1, Units.degreesToRadians(60)));
+                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(1.25)),
+                VecBuilder.fill(1.5, 1.5, Units.degreesToRadians(60)));
 
-        // Pause to allow for CANCoder to initialize. Avoids p
-        // lling bad data and not aligning
+        // Pause to allow for CANCoder to initialize. Avoids pulling bad data and not aligning
         Timer.delay(1);
         resetSwerveModulesToAbsolute();
     }
@@ -198,35 +192,6 @@ public class SwerveDrivetrainSubsystem extends SubsystemBase {
 
     public Command mobility() {
         return run(() -> this.drive(new Translation2d(-1.0, 0.0).times(0.8), 0.0, false, true));
-    }
-
-    // Assuming this method is part of a drivetrain subsystem that provides the necessary methods
-    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                    // Reset odometry for the first path you run during auto
-                    if (isFirstPath) {
-                        this.resetOdometry(traj.getInitialHolonomicPose());
-                    }
-                }),
-                new PPSwerveControllerCommand(
-                        traj,
-                        this::getPose, // Pose supplier
-                        Constants.kDrivetrain.kSwerveDriveKinematics, // SwerveDriveKinematics
-                        new PIDController(
-                                0.1, 0,
-                                0), // X controller. Tune these values for your robot. Leaving them 0 will only use
-                        // feedforwards.
-                        new PIDController(0.1, 0, 0), // Y controller (usually the same values as X controller)
-                        new PIDController(
-                                0.75, 0,
-                                0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only
-                        // use feedforwards.
-                        this::setModuleStates, // Module states consumer
-                        false, // Should the path be automatically mirrored depending on alliance color. Optional,
-                        // defaults to true
-                        this // Requires this drive subsystem
-                        ));
     }
 
     /**

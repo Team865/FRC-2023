@@ -4,7 +4,7 @@
 
 package ca.warp7.frc2023;
 
-import ca.warp7.frc2023.Constants.kControllers;
+import ca.warp7.frc2023.Constants.*;
 import ca.warp7.frc2023.commands.*;
 import ca.warp7.frc2023.commands.auton.*;
 import ca.warp7.frc2023.subsystems.ElevatorSubsystem;
@@ -83,7 +83,7 @@ public class RobotContainer {
                 new HighBalance(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         autoChooser.addOption(
                 "1.5Bump",
-                new OneAndHalfBump(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
+                new WallHighGround(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         autoChooser.addOption(
                 "2High", new TwoHigh(elevatorSubsystem, fourbarSubsystem, intakeSubsystem, swerveDrivetrainSubsystem));
         autoChooser.addOption(
@@ -103,7 +103,7 @@ public class RobotContainer {
         // Toggle brake
         primaryOperatorController.b().toggleOnTrue(swerveDrivetrainSubsystem.brakeCommand());
         // Balance
-        primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem, true));
+        primaryOperatorController.x().whileTrue(new BalanceCommand(swerveDrivetrainSubsystem, false));
 
         /*
          * Operator
@@ -113,7 +113,12 @@ public class RobotContainer {
                 .a()
                 .and(secondaryOperatorController.povDown())
                 .onTrue(new ConditionalCommand(
-                        SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.4, 0),
+                        SetGoalCommands.coneStow(
+                                fourbarSubsystem,
+                                elevatorSubsystem,
+                                intakeSubsystem,
+                                kFourbar.kConeCubeStowFromScoreWait,
+                                0),
                         SetGoalCommands.coneStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0),
                         () -> elevatorSubsystem.currentGoal == Constants.Goals.HIGH_GOAL
                                 || elevatorSubsystem.currentGoal == Constants.Goals.MID_GOAL));
@@ -122,8 +127,14 @@ public class RobotContainer {
                 .a()
                 .and(secondaryOperatorController.povLeft())
                 .onTrue(new ConditionalCommand(
-                        SetGoalCommands.cubeStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0.4, 0),
-                        SetGoalCommands.cubeStow(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0.75),
+                        SetGoalCommands.cubeStow(
+                                fourbarSubsystem,
+                                elevatorSubsystem,
+                                intakeSubsystem,
+                                kFourbar.kConeCubeStowFromScoreWait,
+                                0),
+                        SetGoalCommands.cubeStow(
+                                fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, kElevator.kCubeStowFromGround),
                         () -> elevatorSubsystem.currentGoal == Constants.Goals.HIGH_GOAL
                                 || elevatorSubsystem.currentGoal == Constants.Goals.MID_GOAL));
 
@@ -144,7 +155,8 @@ public class RobotContainer {
                 .a()
                 .and(secondaryOperatorController.povRight())
                 .onTrue(new ConditionalCommand(
-                        SetGoalCommands.groundPickup(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0.5),
+                        SetGoalCommands.groundPickup(
+                                fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, kElevator.kGroundFromCubeStow),
                         SetGoalCommands.groundPickup(fourbarSubsystem, elevatorSubsystem, intakeSubsystem, 0, 0),
                         () -> elevatorSubsystem.currentGoal == Constants.Goals.CUBE_STOW));
         // Mid goal

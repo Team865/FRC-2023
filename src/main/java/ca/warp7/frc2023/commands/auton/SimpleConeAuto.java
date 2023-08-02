@@ -1,4 +1,4 @@
-package ca.warp7.frc2023.commands;
+package ca.warp7.frc2023.commands.auton;
 
 import ca.warp7.frc2023.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Commands;

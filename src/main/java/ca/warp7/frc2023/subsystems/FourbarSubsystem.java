@@ -17,16 +17,16 @@ import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 public class FourbarSubsystem extends TrapezoidProfileSubsystem {
     private final CANSparkMax motorLeft;
     private final CANSparkMax motorRight;
-    private RelativeEncoder builtInEncoder;
-    private SparkMaxPIDController motorController;
+    private final RelativeEncoder builtInEncoder;
+    private final SparkMaxPIDController motorController;
 
     public FourbarSubsystem() {
         super(new TrapezoidProfile.Constraints(120, 200));
         // Create right motor
-        motorRight = new CANSparkMax(kFourbar.kFourbarMotorRightID, MotorType.kBrushless);
+        motorRight = new CANSparkMax(kFourbar.kMotorRightID, MotorType.kBrushless);
 
         // Create left motor
-        motorLeft = new CANSparkMax(kFourbar.kFourbarMotorLeftID, MotorType.kBrushless);
+        motorLeft = new CANSparkMax(kFourbar.kMotorLeftID, MotorType.kBrushless);
 
         motorLeft.setCANTimeout(0);
         motorRight.setCANTimeout(0);
@@ -60,12 +60,16 @@ public class FourbarSubsystem extends TrapezoidProfileSubsystem {
     }
 
     @Override
-    public void useState(TrapezoidProfile.State setpoint) {
+    public void periodic() {
+        super.periodic();
 
-        SmartDashboard.putNumber("Fourbar Set Point Position", setpoint.position);
-        SmartDashboard.putNumber("Fourbar Set Point Velocity", setpoint.velocity);
         SmartDashboard.putNumber("Fourbar Current Position", builtInEncoder.getPosition());
         SmartDashboard.putNumber("Fourbar Applied Output", motorLeft.getAppliedOutput());
+    }
+
+    @Override
+    public void useState(TrapezoidProfile.State setpoint) {
+        SmartDashboard.putNumber("Fourbar Set Point Position", setpoint.position);
         motorController.setReference(setpoint.position, ControlType.kPosition);
     }
 

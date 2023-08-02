@@ -10,22 +10,21 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.*;
 import java.util.List;
 
-public class TwoHigh extends SequentialCommandGroup {
-    public TwoHigh(
+public class WallHighGround extends SequentialCommandGroup {
+    public WallHighGround(
             ElevatorSubsystem elevatorSubsystem,
             FourbarSubsystem fourbarSubsystem,
             IntakeSubsystem intakeSubsystem,
             SwerveDrivetrainSubsystem swerveDrivetrainSubsystem) {
 
-        List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(
-                "1.5BumpEngage",
+        List<PathPlannerTrajectory> wall_high_ground__1 = PathPlanner.loadPathGroup(
+                "wall_high_ground-1",
                 new PathConstraints(2, 2),
                 new PathConstraints(1, 0.5),
                 new PathConstraints(1, 0.5),
                 new PathConstraints(1, 0.5),
                 new PathConstraints(2, 2),
-                new PathConstraints(0.5, 0.5),
-                new PathConstraints(1, 0.5));
+                new PathConstraints(0.5, 0.5));
 
         ConfiguredSwerveAutoBuilder swerveAutoBuilder = new ConfiguredSwerveAutoBuilder(
                 swerveDrivetrainSubsystem, fourbarSubsystem, elevatorSubsystem, intakeSubsystem);
@@ -33,8 +32,9 @@ public class TwoHigh extends SequentialCommandGroup {
         addCommands(
                 // Zero swerve
                 new InstantCommand(() -> {
-                    swerveDrivetrainSubsystem.resetOdometry(path.get(0).getInitialHolonomicPose());
-                    swerveAutoBuilder.getConfiguredAutoBuilder().fullAuto(path);
+                    swerveDrivetrainSubsystem.resetOdometry(
+                            wall_high_ground__1.get(0).getInitialHolonomicPose());
+                    swerveAutoBuilder.getConfiguredAutoBuilder().fullAuto(wall_high_ground__1);
                 }));
     }
 }

@@ -8,7 +8,6 @@ import ca.warp7.frc2023.lib.math.SensitivityGainAdjustment;
 import ca.warp7.frc2023.subsystems.SwerveDrivetrainSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -47,27 +46,35 @@ public class TeleopDriveCommand extends CommandBase {
     public void execute() {
 
         switch (POVSup.getAsInt()) {
-            case (0):
-                xMagnitude = kDriveSingleDirectionPercent;
-                break;
-            case (90):
-                yMagnitude = -kDriveSingleDirectionPercent;
-                break;
-
-            case (180):
-                xMagnitude = -kDriveSingleDirectionPercent;
-                break;
-
-            case (270):
-                yMagnitude = kDriveSingleDirectionPercent;
-                break;
-
             case (-1):
                 xMagnitude = SensitivityGainAdjustment.driveGainAdjustment(
                         MathUtil.applyDeadband(translationSup.getAsDouble(), kTeleop.kDriveDeadband));
                 yMagnitude = SensitivityGainAdjustment.driveGainAdjustment(
                         MathUtil.applyDeadband(strafeSup.getAsDouble(), kTeleop.kDriveDeadband));
-                rotationMagnitude = MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kRotateDeadband);
+                rotationMagnitude = SensitivityGainAdjustment.rotateGainAdjustment(
+                        MathUtil.applyDeadband(rotationSup.getAsDouble(), kTeleop.kRotateDeadband));
+                break;
+            case (0):
+                xMagnitude = kDriveSingleDirectionPercent;
+                yMagnitude = 0;
+                rotationMagnitude = 0;
+                break;
+            case (90):
+                yMagnitude = -kDriveSingleDirectionPercent;
+                xMagnitude = 0;
+                rotationMagnitude = 0;
+                break;
+
+            case (180):
+                xMagnitude = -kDriveSingleDirectionPercent;
+                yMagnitude = 0;
+                rotationMagnitude = 0;
+                break;
+
+            case (270):
+                yMagnitude = kDriveSingleDirectionPercent;
+                xMagnitude = 0;
+                rotationMagnitude = 0;
                 break;
         }
 
@@ -76,10 +83,6 @@ public class TeleopDriveCommand extends CommandBase {
             yMagnitude *= 0.5;
             rotationMagnitude *= 0.5;
         }
-
-        SmartDashboard.putNumber("x mag", xMagnitude);
-        SmartDashboard.putNumber("y mag", yMagnitude);
-        SmartDashboard.putNumber("rot mag", rotationMagnitude);
 
         if (!swerveDrivetrainSubsystem.isBrakeEnabled()) {
             swerveDrivetrainSubsystem.drive(

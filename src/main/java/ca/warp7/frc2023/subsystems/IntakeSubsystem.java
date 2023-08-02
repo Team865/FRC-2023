@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
-    private CANSparkMax frontWheelMotor;
-    private CANSparkMax rearWheelMotor;
-    private CANSparkMax talonPivotMotor;
+    private final CANSparkMax frontWheelMotor;
+    private final CANSparkMax rearWheelMotor;
+    private final CANSparkMax talonPivotMotor;
 
-    private RelativeEncoder talonPivotEncoder;
-    private SparkMaxPIDController talonPivotMotorController;
+    private final RelativeEncoder talonPivotEncoder;
+    private final SparkMaxPIDController talonPivotMotorController;
 
     private double talonPivotSetPoint;
 
